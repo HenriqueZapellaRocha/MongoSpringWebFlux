@@ -1,0 +1,70 @@
+package com.example.mongospringwebflux.service.services;
+
+
+
+import java.math.BigDecimal;
+
+import com.example.mongospringwebflux.exception.NotFoundException;
+import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
+import com.example.mongospringwebflux.repository.ProductRepository;
+import com.example.mongospringwebflux.repository.entity.ProductEntity;
+import com.example.mongospringwebflux.v1.controller.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.ProductResponseDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+
+@RequiredArgsConstructor
+@Service
+public class ProductService {
+
+    private final ProductRepository productRepository;
+    private final ExchangeIntegration exchangeIntegration;
+
+    public Mono<ProductResponseDTO> add(ProductRequestDTO product, String from, String to) {
+        ProductEntity productEntity = product.toEntity();
+        return exchangeIntegration.makeExchange(from, to)
+                .flatMap(exchangeRate -> {
+                    productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                    return productRepository.save(productEntity);
+                })
+                .map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
+    }
+
+
+    public Mono<ProductResponseDTO> getById( String id, String from, String to ) {
+        return productRepository.findById( id )
+                        .switchIfEmpty(Mono.error(new NotFoundException("No product found")))
+                .zipWith(exchangeIntegration.makeExchange(from,to), (product,exchangeRate) -> {
+                    product.setPrice(product.getPrice().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                    return product;
+                })
+                .map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
+    }
+
+//    public ProductResponseDTO update( ProductRequestDTO product, String id ) {
+//        ProductEntity productEntity = product.toEntity( id );
+//        if( productRepository.existsById( id ) ) {
+//            return ProductResponseDTO.entityToResponse(productRepository.save( productEntity ), "USD");
+//        } else {
+//            throw new NotFoundException( "Not found" );
+//        }
+//    }
+//
+    public Flux<ProductResponseDTO> getAll(String from, String to ) {
+        return exchangeIntegration.makeExchange(from,to)
+                .flatMapMany(exchangeRate -> productRepository.findAll()
+                        .map(productEntity -> {
+                            productEntity.setPrice(
+                                    productEntity.getPrice().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                            return ProductResponseDTO.entityToResponse(productEntity, to);
+                        }));
+    }
+//
+//    public void deleteMany( List<String> ids ) {
+//        productRepository.deleteAllById( ids );
+//    }
+}
+
