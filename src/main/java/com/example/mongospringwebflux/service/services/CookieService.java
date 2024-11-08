@@ -16,15 +16,12 @@ public class CookieService {
     public static void setCookie(ServerHttpResponse response, String value) {
         ResponseCookie cookie = ResponseCookie.from("last", value)
                 .httpOnly(true)
-                .path("/")
-                .maxAge(Duration.ofDays(1))
+                .path("/last")
                 .build();
 
         response.addCookie(cookie);
     }
 }
-
-
 
 //package com.example.demo.service.services;
 //
