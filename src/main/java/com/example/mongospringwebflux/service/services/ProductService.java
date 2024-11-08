@@ -40,19 +40,20 @@ public class ProductService {
                 .zipWith(exchangeIntegration.makeExchange(from,to), (product,exchangeRate) -> {
                     product.setPrice(product.getPrice().multiply(new BigDecimal(String.valueOf(exchangeRate))));
                     return product;
-                })
-                .map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
+                }).map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
     }
 
-//    public ProductResponseDTO update( ProductRequestDTO product, String id ) {
-//        ProductEntity productEntity = product.toEntity( id );
-//        if( productRepository.existsById( id ) ) {
-//            return ProductResponseDTO.entityToResponse(productRepository.save( productEntity ), "USD");
-//        } else {
-//            throw new NotFoundException( "Not found" );
-//        }
-//    }
-//
+    public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id ) {
+        ProductEntity productEntity = product.toEntity( id );
+        return productRepository.findById( id )
+                .switchIfEmpty(Mono.error(new NotFoundException("No product found")))
+                .flatMap(existingProduct -> {
+                    existingProduct = productEntity;
+                    return productRepository.save(existingProduct);
+                }).map(productSaved -> ProductResponseDTO.entityToResponse(productSaved, "USD"));
+
+    }
+
     public Flux<ProductResponseDTO> getAll(String from, String to ) {
         return exchangeIntegration.makeExchange(from,to)
                 .flatMapMany(exchangeRate -> productRepository.findAll()
@@ -62,9 +63,9 @@ public class ProductService {
                             return ProductResponseDTO.entityToResponse(productEntity, to);
                         }));
     }
-//
-//    public void deleteMany( List<String> ids ) {
-//        productRepository.deleteAllById( ids );
-//    }
+
+    public void deleteMany( Flux<String> ids ) {
+        productRepository.deleteAllById( ids );
+    }
 }
 
