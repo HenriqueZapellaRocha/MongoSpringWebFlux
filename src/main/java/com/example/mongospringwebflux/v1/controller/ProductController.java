@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -57,13 +57,12 @@ public class ProductController {
         return productService.update( product, id );
     }
 
-//    @DeleteMapping( "/{id}" )
-//    public void deleteById( @PathVariable String id ) {
-//        final LinkedList<String> ids = new LinkedList<>();
-//        ids.add( id );
-//        productService.deleteMany( ids );
-//    }
-//
+    @DeleteMapping( "/{id}" )
+    public Mono<Void> deleteById( @PathVariable String id ) {
+        final LinkedList<String> ids = new LinkedList<>();
+        ids.add( id );
+        return productService.deleteMany( ids );
+    }
 
     @DeleteMapping
     public Mono<Void> deleteMany( @RequestBody List<String> id ) {
