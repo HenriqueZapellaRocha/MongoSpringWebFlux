@@ -36,15 +36,15 @@ public class ProductController {
                                              ServerHttpResponse response ) {
 
         return productService.getById( id, "USD", currency )
-                .doOnNext(product -> {
-                    CookieService.setCookie(response, product.productID());
+                .doOnNext( product -> {
+                    CookieService.setCookie( response, product.productID() );
                 });
     }
 
     @GetMapping( "/last" )
     public Mono<ProductResponseDTO> getLast( @CookieValue("last") String cookie,
                                  @RequestParam( name = "currency" ) String currency ) {
-        return productService.getById(cookie, "USD", currency);
+        return productService.getById (cookie, "USD", currency );
     }
 
     @GetMapping( "/All" )

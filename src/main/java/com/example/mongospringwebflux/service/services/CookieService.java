@@ -22,11 +22,6 @@ public class CookieService {
 
         response.addCookie(cookie);
     }
-
-
-//    public static Mono<Cookie> getCookie(ServerHttpRequest request, String name) {
-//        return Mono.justOrEmpty(request.getCo);
-//    }
 }
 
 

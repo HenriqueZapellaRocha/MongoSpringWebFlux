@@ -24,44 +24,46 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ExchangeIntegration exchangeIntegration;
 
-    public Mono<ProductResponseDTO> add(ProductRequestDTO product, String from, String to) {
+    public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to ) {
         ProductEntity productEntity = product.toEntity();
-        return exchangeIntegration.makeExchange(from, to)
-                .flatMap(exchangeRate -> {
+        return exchangeIntegration.makeExchange( from, to )
+                .flatMap( exchangeRate -> {
                     productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
-                    return productRepository.save(productEntity);
+                    return productRepository.save( productEntity );
                 })
-                .map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
+                .map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
     }
 
 
     public Mono<ProductResponseDTO> getById( String id, String from, String to ) {
         return productRepository.findById( id )
-                        .switchIfEmpty(Mono.error(new NotFoundException("No product found")))
-                .zipWith(exchangeIntegration.makeExchange(from,to), (product,exchangeRate) -> {
-                    product.setPrice(product.getPrice().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                        .switchIfEmpty( Mono.error(new NotFoundException( "No product found" ) ) )
+                .zipWith( exchangeIntegration.makeExchange( from,to ), ( product,exchangeRate ) -> {
+                    product.setPrice( product.getPrice()
+                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
                     return product;
-                }).map(savedProductEntity -> ProductResponseDTO.entityToResponse(savedProductEntity, to));
+                }).map (savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
     }
 
     public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id ) {
         ProductEntity productEntity = product.toEntity( id );
         return productRepository.findById( id )
-                .switchIfEmpty(Mono.error(new NotFoundException("No product found")))
-                .flatMap(existingProduct -> {
+                .switchIfEmpty( Mono.error (new NotFoundException( "No product found" ) ) )
+                .flatMap( existingProduct -> {
                     existingProduct = productEntity;
-                    return productRepository.save(existingProduct);
-                }).map(productSaved -> ProductResponseDTO.entityToResponse(productSaved, "USD"));
+                    return productRepository.save( existingProduct );
+                }).map( productSaved -> ProductResponseDTO.entityToResponse( productSaved, "USD" ) );
 
     }
 
-    public Flux<ProductResponseDTO> getAll(String from, String to ) {
+    public Flux<ProductResponseDTO> getAll( String from, String to ) {
         return exchangeIntegration.makeExchange(from,to)
-                .flatMapMany(exchangeRate -> productRepository.findAll()
-                        .map(productEntity -> {
+                .flatMapMany( exchangeRate -> productRepository.findAll()
+                        .map( productEntity -> {
                             productEntity.setPrice(
-                                    productEntity.getPrice().multiply(new BigDecimal(String.valueOf(exchangeRate))));
-                            return ProductResponseDTO.entityToResponse(productEntity, to);
+                                    productEntity.getPrice()
+                                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
+                            return ProductResponseDTO.entityToResponse( productEntity, to );
                         }));
     }
 
