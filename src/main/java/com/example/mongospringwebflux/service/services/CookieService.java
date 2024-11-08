@@ -1,33 +1,35 @@
 package com.example.mongospringwebflux.service.services;
 
 
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 
 @Service
 @Component
 public class CookieService {
 
-//    public static void setCookie(HttpServletResponse response, String name, String value) {
-//        Cookie cookie = new Cookie(name, value);
-//        cookie.setPath( "/product/last" );
-//        cookie.setHttpOnly(true);
-//        response.addCookie(cookie);
-//    }
-//
-//
-//    public static Cookie getCookie(HttpServletRequest request, String name) {
-//        return Arrays.stream(Optional.ofNullable(request.getCookies())
-//                        //this is for case no cookie is set
-//                        .orElseThrow(() -> new CookieNotSetException("No cookie is set")))
-//                .filter(cookie -> cookie.getName().equals(name))
-//                .findFirst()
-//                //this is case the cookie is not found =)
-//                .orElseThrow(() -> new NotFoundException("Cookie not found"));
-//    }
+    public static void setCookie(ServerHttpResponse response, String value) {
+        ResponseCookie cookie = ResponseCookie.from("last", value)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .build();
 
+        response.addCookie(cookie);
+    }
+
+
+//    public static Mono<Cookie> getCookie(ServerHttpRequest request, String name) {
+//        return Mono.justOrEmpty(request.getCo);
+//    }
 }
+
+
 
 //package com.example.demo.service.services;
 //

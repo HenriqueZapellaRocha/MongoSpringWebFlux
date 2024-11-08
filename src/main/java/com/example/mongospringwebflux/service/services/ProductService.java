@@ -3,6 +3,7 @@ package com.example.mongospringwebflux.service.services;
 
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
@@ -64,8 +65,8 @@ public class ProductService {
                         }));
     }
 
-    public void deleteMany( Flux<String> ids ) {
-        productRepository.deleteAllById( ids );
+    public Mono<Void> deleteMany( List<String> ids ) {
+        return productRepository.deleteAllById( ids );
     }
 }
 

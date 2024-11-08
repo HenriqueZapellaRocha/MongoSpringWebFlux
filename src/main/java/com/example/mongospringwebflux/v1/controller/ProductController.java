@@ -1,12 +1,19 @@
 package com.example.mongospringwebflux.v1.controller;
 
+import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
+import io.netty.handler.codec.http.cookie.Cookie;
 import jakarta.validation.Valid;
+import org.springframework.http.server.ServerHttpRequest;
+
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -25,17 +32,20 @@ public class ProductController {
 
     @GetMapping( "/{id}" )
     public Mono<ProductResponseDTO> getById( @PathVariable String id,
-                                        @RequestParam( name = "currency" ) String currency ) {
-        return productService.getById( id,"USD", currency );
+                                        @RequestParam( name = "currency" ) String currency,
+                                             ServerHttpResponse response ) {
+
+        return productService.getById( id, "USD", currency )
+                .doOnNext(product -> {
+                    CookieService.setCookie(response, product.productID());
+                });
     }
 
-//    @GetMapping( "/last" )
-//    public ProductResponseDTO getLast( HttpServletRequest request,
-//                                 @RequestParam( name = "currency" ) String currency ) {
-//        final Cookie cookie = CookieService.getCookie( request, "last" );
-//
-//        return productService.getById( cookie.getValue(),"USD", currency );
-//    }
+    @GetMapping( "/last" )
+    public Mono<ProductResponseDTO> getLast( @CookieValue("last") String cookie,
+                                 @RequestParam( name = "currency" ) String currency ) {
+        return productService.getById(cookie, "USD", currency);
+    }
 
     @GetMapping( "/All" )
     public Flux<ProductResponseDTO> getAll( @RequestParam( name = "currency" ) String currency ) {
@@ -55,8 +65,8 @@ public class ProductController {
 //    }
 //
 
-//    @DeleteMapping
-//    public void deleteMany( @RequestBody List<String> id ) {
-//        productService.deleteMany( id );
-//    }
+    @DeleteMapping
+    public Mono<Void> deleteMany( @RequestBody List<String> id ) {
+        return productService.deleteMany( id );
+    }
 }
