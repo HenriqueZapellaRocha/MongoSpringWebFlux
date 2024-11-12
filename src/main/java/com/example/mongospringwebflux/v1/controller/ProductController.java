@@ -2,10 +2,8 @@ package com.example.mongospringwebflux.v1.controller;
 
 import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
-import io.netty.handler.codec.http.cookie.Cookie;
 import jakarta.validation.Valid;
-import org.springframework.http.server.ServerHttpRequest;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping( "/product" )

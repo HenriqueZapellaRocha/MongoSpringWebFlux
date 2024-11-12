@@ -2,6 +2,7 @@ package com.example.mongospringwebflux.integration.exchange;
 
 
 
+import com.example.mongospringwebflux.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,6 +23,7 @@ public class ExchangeIntegration {
                 .uri("/pair/{from}/{to}", from, to)
                 .retrieve()
                 .bodyToMono(ExchangeResponse.class)
-                .map(ExchangeResponse::conversion_rate);
+                .map(ExchangeResponse::conversion_rate)
+                    .onErrorResume(throwable -> Mono.error( new NotFoundException( "Currency not found" ) ) );
     }
 }
