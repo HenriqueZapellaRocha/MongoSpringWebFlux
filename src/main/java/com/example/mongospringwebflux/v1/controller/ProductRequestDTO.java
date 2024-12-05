@@ -20,16 +20,16 @@ public record ProductRequestDTO(
         BigDecimal price
 ) {
     public ProductRequestDTO {
-        if (price != null) {
-            price = price.setScale(2, RoundingMode.HALF_UP);
+        if ( price != null ) {
+            price = price.setScale( 2, RoundingMode.HALF_UP );
         }
     }
 
-    public ProductEntity toEntity(String id) {
+    public ProductEntity toEntity( String id ) {
         return ProductEntity.builder()
                 .productID(id)
-                .name(this.name)
-                .price(this.price)
+                .name( this.name )
+                .price( this.price )
                 .build();
     }
 

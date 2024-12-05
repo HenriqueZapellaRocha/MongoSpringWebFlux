@@ -37,18 +37,18 @@ public class ProductService {
 
     public Mono<ProductResponseDTO> getById( String id, String from, String to ) {
         return productRepository.findById( id )
-                        .switchIfEmpty( Mono.error(new NotFoundException( "No product found" ) ) )
+                        .switchIfEmpty( Mono.error( new NotFoundException( "No product found" ) ) )
                 .zipWith( exchangeIntegration.makeExchange( from,to ), ( product,exchangeRate ) -> {
                     product.setPrice( product.getPrice()
                             .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
                     return product;
-                }).map (savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
+                }).map(savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
     }
 
     public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id ) {
         ProductEntity productEntity = product.toEntity( id );
         return productRepository.findById( id )
-                .switchIfEmpty( Mono.error (new NotFoundException( "No product found" ) ) )
+                .switchIfEmpty( Mono.error ( new NotFoundException( "No product found" ) ) )
                 .flatMap( existingProduct -> {
                     existingProduct = productEntity;
                     return productRepository.save( existingProduct );

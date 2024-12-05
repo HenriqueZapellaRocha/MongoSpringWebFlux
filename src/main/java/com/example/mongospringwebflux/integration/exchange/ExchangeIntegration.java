@@ -9,14 +9,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class ExchangeIntegration {
 
     private final WebClient webClient;
 
-    public Mono<Double> makeExchange(String from, String to ) {
+    public Mono<Double> makeExchange( String from, String to ) {
 
         return webClient
                 .get()
