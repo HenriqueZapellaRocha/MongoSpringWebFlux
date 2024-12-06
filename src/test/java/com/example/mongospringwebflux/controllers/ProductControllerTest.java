@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -81,12 +80,32 @@ class ProductControllerTest {
                 .jsonPath( "$.error" ).isEqualTo(  "currency not found" );
     }
 
+    @Test
+    void productControllerTestAddInvalidProductReturnErrros() {
+
+        var productRequest = MockBuilder.productRequestInvalidValues();
+
+        WebTestClient.ResponseSpec response = webClient.post()
+                .uri( uriBuilder -> uriBuilder.path( "/product/add" )
+                        .queryParam( "currency", "BRL" )
+                        .build())
+                .contentType( MediaType.APPLICATION_JSON )
+                .bodyValue( productRequest )
+                .exchange();
+        
+        response.expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath( "$.errors[0]" ).isEqualTo(  "name: blank name" )
+                .jsonPath( "$.errors[1]" ).isEqualTo(  "price: negative number" );
+    }
+
 
     @Test
     void productControllerTestGetByIdProductReturnOk() {
 
         var  productResponse = MockBuilder.productResponse();
-        when(productService.getById(anyString(),anyString(),anyString())).thenReturn(Mono.just(productResponse));
+        when(productService.getById( anyString(),anyString(),anyString() ) )
+                .thenReturn( Mono.just( productResponse ) );
 
 
         WebTestClient.ResponseSpec response = webClient.get()

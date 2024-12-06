@@ -14,7 +14,14 @@ public class MockBuilder {
                 .name("JVM")
                 .price( new ProductResponseDTO.PriceResponse("BRL", new BigDecimal(200)) )
                 .build();
+    }
 
+    public static ProductRequestDTO productRequestInvalidValues() {
+
+        return  ProductRequestDTO.builder()
+                .name( "" )
+                .price( new BigDecimal(-200.0 ) )
+                .build();
     }
 
     public static ProductRequestDTO productRequest() {
