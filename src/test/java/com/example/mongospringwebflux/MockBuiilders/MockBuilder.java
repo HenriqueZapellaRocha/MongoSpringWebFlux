@@ -11,7 +11,7 @@ public class MockBuilder {
         return ProductResponseDTO.builder()
                 .productID("DDDDDDD123123123")
                 .name("JVM")
-                .price( new ProductResponseDTO.PriceResponse("BRL", new BigDecimal("200.00")) )
+                .price( new ProductResponseDTO.PriceResponse("BRL", new BigDecimal(200)) )
                 .build();
 
     }
