@@ -1,9 +1,13 @@
 package com.example.mongospringwebflux.v1.controller;
 
+import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +26,11 @@ public class ProductController {
 
 
     @PostMapping( "/add" )
-    public Mono<ProductResponseDTO> add(@RequestBody @Valid ProductRequestDTO product,
-                                        @RequestParam( name = "currency" ) String currency ) {
-        return productService.add( product,currency, "USD" );
+    public Mono<ProductResponseDTO> add( @RequestBody @Valid ProductRequestDTO product,
+                                        @RequestParam( name = "currency" ) String currency,
+                                        @AuthenticationPrincipal UserEntity currentUser ) {
+
+        return productService.add( product,currency, "USD", currentUser );
     }
 
     @GetMapping( "/{id}" )

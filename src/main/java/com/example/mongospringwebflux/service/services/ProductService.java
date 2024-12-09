@@ -9,8 +9,9 @@ import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
-import com.example.mongospringwebflux.v1.controller.ProductRequestDTO;
-import com.example.mongospringwebflux.v1.controller.ProductResponseDTO;
+import com.example.mongospringwebflux.repository.entity.UserEntity;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -24,11 +25,12 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ExchangeIntegration exchangeIntegration;
 
-    public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to ) {
+    public Mono<ProductResponseDTO> add(ProductRequestDTO product, String from, String to, UserEntity currentUser) {
         ProductEntity productEntity = product.toEntity();
         return exchangeIntegration.makeExchange( from, to )
                 .flatMap( exchangeRate -> {
                     productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                    productEntity.setStoreId(currentUser.getStoreRelated());
                     return productRepository.save( productEntity );
                 })
                 .map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );

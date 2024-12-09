@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.v1.controller;
+package com.example.mongospringwebflux.v1.controller.DTOS.requests;
 
 
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
@@ -17,7 +17,9 @@ public record ProductRequestDTO(
         String name,
         @NotNull(message = "price: blank price")
         @Min(value = 0, message = "price: negative number")
-        BigDecimal price
+        BigDecimal price,
+        @NotBlank(message = "description: blank description")
+        String description
 ) {
     public ProductRequestDTO {
         if ( price != null ) {
@@ -30,6 +32,7 @@ public record ProductRequestDTO(
                 .productID(id)
                 .name( this.name )
                 .price( this.price )
+                .description( this.description )
                 .build();
     }
 
@@ -38,6 +41,7 @@ public record ProductRequestDTO(
                 .productID(UUID.randomUUID().toString())
                 .name(this.name)
                 .price(this.price)
+                .description( this.description )
                 .build();
     }
 }

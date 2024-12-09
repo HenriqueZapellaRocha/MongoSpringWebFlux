@@ -1,7 +1,7 @@
 package com.example.mongospringwebflux.MockBuiilders;
 
-import com.example.mongospringwebflux.v1.controller.ProductRequestDTO;
-import com.example.mongospringwebflux.v1.controller.ProductResponseDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 
 import java.math.BigDecimal;
 

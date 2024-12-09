@@ -42,10 +42,10 @@ public class GlobalExceptionsHandlers {
         return Mono.just(errorResponse);
     }
 
-    @ResponseStatus( HttpStatus.BAD_REQUEST )
-    @ExceptionHandler( ResponseStatusException.class )
-    public Mono<GlobalExceptionDTO> handleGlobalException(ResponseStatusException ex) {
-        return Mono.just(
-                new GlobalExceptionDTO( "An unknown error occurred. Please consult the support for resolution." ));
-    }
+//    @ResponseStatus( HttpStatus.BAD_REQUEST )
+//    @ExceptionHandler( ResponseStatusException.class )
+//    public Mono<GlobalExceptionDTO> handleGlobalException(ResponseStatusException ex) {
+//        return Mono.just(
+//                new GlobalExceptionDTO( "An unknown error occurred. Please consult the support for resolution." ));
+//    }
 }

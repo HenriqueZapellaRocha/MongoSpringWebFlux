@@ -1,7 +1,6 @@
-package com.example.mongospringwebflux.configs;
+package com.example.mongospringwebflux.configs.documentation;
 
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 

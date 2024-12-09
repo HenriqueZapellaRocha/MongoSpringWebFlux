@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.v1.controller;
+package com.example.mongospringwebflux.v1.controller.DTOS.responses;
 
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import java.math.RoundingMode;
 public record ProductResponseDTO(
         String productID,
         String name,
-        PriceResponse price
+        PriceResponse price,
+        String description,
+        String store
 ) {
 
     public static ProductResponseDTO entityToResponse(ProductEntity productEntity, String currency) {
@@ -17,6 +19,8 @@ public record ProductResponseDTO(
                 .productID(productEntity.getProductID())
                 .name(productEntity.getName())
                 .price(new PriceResponse(currency, productEntity.getPrice()))
+                .description(productEntity.getDescription())
+                .store(productEntity.getStoreId())
                 .build();
     }
 
