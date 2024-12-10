@@ -3,6 +3,7 @@ package com.example.mongospringwebflux.service.services;
 
 
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import com.example.mongospringwebflux.exception.NotFoundException;
@@ -54,14 +55,25 @@ public class ProductService {
                 }).map(savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
     }
 
-    public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id ) {
+    public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id, String storeId ) {
+
         ProductEntity productEntity = product.toEntity( id );
+
         return productRepository.findById( id )
                 .switchIfEmpty( Mono.error ( new NotFoundException( "No product found" ) ) )
-                .flatMap( existingProduct -> {
-                    existingProduct = productEntity;
-                    return productRepository.save( existingProduct );
-                }).map( productSaved -> ProductResponseDTO.entityToResponse( productSaved, "USD" ) );
+                .flatMap( existingProduct ->
+                    Mono.just( existingProduct )
+                            .filter( p -> p.getStoreId().equals( storeId ) )
+                            .switchIfEmpty( Mono.error(
+                                    new AccessDeniedException( "You don't have permission to update this item" ) ) )
+                            .flatMap(p -> {
+                                p.setDescription(productEntity.getDescription());
+                                p.setPrice(productEntity.getPrice());
+                                p.setName(productEntity.getName());
+
+                                return productRepository.save(p);
+                            })
+                ).map( productSaved -> ProductResponseDTO.entityToResponse( productSaved, "USD" ) );
 
     }
 

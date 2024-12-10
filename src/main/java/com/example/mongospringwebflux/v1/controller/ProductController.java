@@ -62,8 +62,11 @@ public class ProductController {
     }
 
     @PutMapping( "/{id}" )
-    public Mono<ProductResponseDTO> update( @RequestBody @Valid ProductRequestDTO product, @PathVariable String id ) {
-        return productService.update( product, id );
+    public Mono<ProductResponseDTO> update( @RequestBody @Valid ProductRequestDTO product,
+                                            @PathVariable String id,
+                                            @AuthenticationPrincipal UserEntity currentUser) {
+
+        return productService.update( product, id, currentUser.getStoreId() );
     }
 
     @DeleteMapping( "/{id}" )

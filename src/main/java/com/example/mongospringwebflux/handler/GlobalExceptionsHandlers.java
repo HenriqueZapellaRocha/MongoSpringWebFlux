@@ -15,6 +15,8 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,10 +44,10 @@ public class GlobalExceptionsHandlers {
         return Mono.just(errorResponse);
     }
 
-//    @ResponseStatus( HttpStatus.BAD_REQUEST )
-//    @ExceptionHandler( ResponseStatusException.class )
-//    public Mono<GlobalExceptionDTO> handleGlobalException(ResponseStatusException ex) {
-//        return Mono.just(
-//                new GlobalExceptionDTO( "An unknown error occurred. Please consult the support for resolution." ));
-//    }
+    @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public Mono<GlobalExceptionDTO> handleAccessDenied(AccessDeniedException ex) {
+        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+    }
 }
