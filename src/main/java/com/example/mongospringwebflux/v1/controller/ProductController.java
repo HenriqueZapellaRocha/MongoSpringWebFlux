@@ -55,6 +55,12 @@ public class ProductController {
         return productService.getAll( "USD", currency );
     }
 
+    @GetMapping( "/storeRelated/{id}" )
+    public Flux<ProductResponseDTO> allProductStoreRelated( @RequestParam( name = "currency" ) String currency,
+                                                            @PathVariable String id ) {
+        return productService.getAllProductsRelatedStore( id, currency );
+    }
+
     @PutMapping( "/{id}" )
     public Mono<ProductResponseDTO> update( @RequestBody @Valid ProductRequestDTO product, @PathVariable String id ) {
         return productService.update( product, id );

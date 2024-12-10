@@ -19,27 +19,27 @@ import reactor.core.publisher.Mono;
 @RestController
 @Data
 @AllArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping( "/auth" )
 public class AuthController {
 
     private UserService userService;
     private StoreService storeService;
 
-    @PostMapping("/login")
-    public Mono<AuthResponseDTO> login(@RequestBody @Valid loginRequestDTO login) {
+    @PostMapping( "/login" )
+    public Mono<AuthResponseDTO> login( @RequestBody @Valid loginRequestDTO login ) {
         return userService.login( login );
     }
 
-    @PostMapping("/register")
+    @PostMapping( "/register" )
     public Mono<Object> register( @RequestBody @Valid RegisterRequestDTO registerRequest ) {
 
-        if (registerRequest.role() == UserRoles.ROLE_STORE_ADMIN && registerRequest.storeRelated() != null) {
-            return storeService.createStore(registerRequest.storeRelated())
+        if ( registerRequest.role() == UserRoles.ROLE_STORE_ADMIN && registerRequest.storeRelated() != null ) {
+            return storeService.createStore( registerRequest.storeRelated() )
                     .flatMap(store -> {
-                        return userService.createUser(registerRequest, store.getId());
+                        return userService.createUser( registerRequest, store.getId() );
                     });
         } else {
-            return userService.createUser(registerRequest, null);
+            return userService.createUser( registerRequest, null );
         }
     }
 

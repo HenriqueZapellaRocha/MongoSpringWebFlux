@@ -13,12 +13,13 @@ import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
+@Data
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -30,17 +31,18 @@ public class ProductService {
     public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to, UserEntity currentUser ) {
         ProductEntity productEntity = product.toEntity();
 
-        return storeRepository.findById(currentUser.getStoreId())
+        return storeRepository.findById( currentUser.getStoreId() )
                 .flatMap(storeEntity -> {
                     return exchangeIntegration.makeExchange( from,to )
                             .flatMap( exchangeRate -> {
-                                productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                                productEntity.setPrice(product.price()
+                                        .multiply( new BigDecimal(String.valueOf( exchangeRate ) ) ));
                                 productEntity.setStoreId( storeEntity.getId() );
                                 return productRepository.save( productEntity );
-                            }).map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
+                            })
+                            .map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
                 });
     }
-
 
     public Mono<ProductResponseDTO> getById( String id, String from, String to ) {
         return productRepository.findById( id )
@@ -76,6 +78,13 @@ public class ProductService {
 
     public Mono<Void> deleteMany( List<String> ids ) {
         return productRepository.deleteAllById( ids );
+    }
+
+    public Flux<ProductResponseDTO> getAllProductsRelatedStore( String storeId, String currency ) {
+
+        return productRepository.getByStoreId( storeId )
+                .map( productEntity -> ProductResponseDTO.entityToResponse( productEntity, currency ) );
+
     }
 }
 

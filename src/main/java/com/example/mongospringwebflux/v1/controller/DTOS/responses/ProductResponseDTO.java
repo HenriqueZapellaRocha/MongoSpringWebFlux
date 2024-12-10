@@ -15,13 +15,13 @@ public record ProductResponseDTO(
         String store
 ) {
 
-    public static ProductResponseDTO entityToResponse(ProductEntity productEntity, String currency) {
+    public static ProductResponseDTO entityToResponse( ProductEntity productEntity, String currency ) {
         return ProductResponseDTO.builder()
-                .productID(productEntity.getProductID())
-                .name(productEntity.getName())
-                .price(new PriceResponse(currency, productEntity.getPrice()))
-                .description(productEntity.getDescription())
-                .store(productEntity.getStoreId())
+                .productID( productEntity.getProductID() )
+                .name( productEntity.getName() )
+                .price( new PriceResponse( currency, productEntity.getPrice() ) )
+                .description( productEntity.getDescription() )
+                .store( productEntity.getStoreId() )
                 .build();
     }
 
@@ -32,7 +32,7 @@ public record ProductResponseDTO(
     ) {
         public PriceResponse {
             if (value != null) {
-                value = value.setScale(2, RoundingMode.HALF_UP);
+                value = value.setScale( 2, RoundingMode.HALF_UP );
             }
         }
     }

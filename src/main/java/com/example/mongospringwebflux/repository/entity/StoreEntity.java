@@ -23,7 +23,4 @@ public class StoreEntity {
     private String city;
     private String state;
 
-    @Indexed( unique = true )
-    private String ownerId;
-
 }

@@ -33,7 +33,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("Autoridade do usuário: " + this.role);  // Adicione este log para verificar o role
         if (this.role == UserRoles.ROLE_STORE_ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_SUPERVISOR"),
                     new SimpleGrantedAuthority("ROLE_USER"));

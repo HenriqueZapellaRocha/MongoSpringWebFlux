@@ -1,4 +1,6 @@
 package com.example.mongospringwebflux.configs.security;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-
+@Data
+@AllArgsConstructor
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Autowired
     private SecurityFilter securityFilter;
 
     @Bean
@@ -28,15 +30,19 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .pathMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/product/add").hasAuthority("ROLE_SUPERVISOR")
-                        .pathMatchers(HttpMethod.PUT, "/product/**").hasAuthority("ROLE_SUPERVISOR")
-                        .pathMatchers(HttpMethod.DELETE, "/product/**").hasAuthority("ROLE_SUPERVISOR")
-                        .pathMatchers(HttpMethod.GET, "/product/**").hasAnyAuthority("ROLE_SUPERVISOR",
-                                "ROLE_ADMIN")
-
+                        .pathMatchers(HttpMethod.POST, "/product/add")
+                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.PUT, "/product**")
+                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.DELETE, "/product**")
+                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.GET, "/product**")
+                                            .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
+                        .pathMatchers(HttpMethod.GET, "/store**")
+                        .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
                         .anyExchange().authenticated()
                 )
-                .addFilterBefore(securityFilter, SecurityWebFiltersOrder.AUTHORIZATION)
+                .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )
                 .build();
     }
 
