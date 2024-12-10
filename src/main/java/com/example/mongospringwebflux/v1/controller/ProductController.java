@@ -65,7 +65,7 @@ public class ProductController {
     public Mono<ProductResponseDTO> update( @RequestBody @Valid ProductRequestDTO product,
                                             @PathVariable String id,
                                             @AuthenticationPrincipal UserEntity currentUser,
-                                            @RequestParam( name = "currency" ) String currency) {
+                                            @RequestParam( name = "currency" ) String currency ) {
 
         return productService.update( product, id, currentUser.getStoreId(), currency, "USD" );
     }

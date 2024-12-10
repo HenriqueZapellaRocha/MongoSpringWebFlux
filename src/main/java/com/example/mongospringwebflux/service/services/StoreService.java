@@ -5,13 +5,11 @@ import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.StoreCreationRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.StoreResponseDTO;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@Data
 @AllArgsConstructor
 public class StoreService {
 
