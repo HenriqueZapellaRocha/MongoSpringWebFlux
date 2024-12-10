@@ -64,20 +64,23 @@ public class ProductController {
     @PutMapping( "/{id}" )
     public Mono<ProductResponseDTO> update( @RequestBody @Valid ProductRequestDTO product,
                                             @PathVariable String id,
-                                            @AuthenticationPrincipal UserEntity currentUser) {
+                                            @AuthenticationPrincipal UserEntity currentUser,
+                                            @RequestParam( name = "currency" ) String currency) {
 
-        return productService.update( product, id, currentUser.getStoreId() );
+        return productService.update( product, id, currentUser.getStoreId(), currency, "USD" );
     }
 
     @DeleteMapping( "/{id}" )
-    public Mono<Void> deleteById( @PathVariable String id ) {
+    public Mono<Void> deleteById( @PathVariable String id,
+                                  @AuthenticationPrincipal UserEntity currentUser ) {
         final LinkedList<String> ids = new LinkedList<>();
         ids.add( id );
-        return productService.deleteMany( ids );
+        return productService.deleteMany( ids, currentUser.getStoreId() );
     }
 
     @DeleteMapping
-    public Mono<Void> deleteMany( @RequestBody List<String> id ) {
-        return productService.deleteMany( id );
+    public Mono<Void> deleteMany( @RequestBody List<String> id,
+                                  @AuthenticationPrincipal UserEntity currentUser ) {
+        return productService.deleteMany( id, currentUser.getStoreId() );
     }
 }

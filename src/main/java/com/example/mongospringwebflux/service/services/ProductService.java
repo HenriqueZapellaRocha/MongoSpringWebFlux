@@ -55,7 +55,8 @@ public class ProductService {
                 }).map(savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
     }
 
-    public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id, String storeId ) {
+    public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id, String storeId,
+                                            String from, String to ) {
 
         ProductEntity productEntity = product.toEntity( id );
 
@@ -63,15 +64,21 @@ public class ProductService {
                 .switchIfEmpty( Mono.error ( new NotFoundException( "No product found" ) ) )
                 .flatMap( existingProduct ->
                     Mono.just( existingProduct )
-                            .filter( p -> p.getStoreId().equals( storeId ) )
+                            .filter( filterProduct -> filterProduct.getStoreId().equals( storeId ) )
                             .switchIfEmpty( Mono.error(
                                     new AccessDeniedException( "You don't have permission to update this item" ) ) )
-                            .flatMap(p -> {
-                                p.setDescription(productEntity.getDescription());
-                                p.setPrice(productEntity.getPrice());
-                                p.setName(productEntity.getName());
+                            .flatMap( updatedProduct -> {
 
-                                return productRepository.save(p);
+                                updatedProduct.setDescription( productEntity.getDescription() );
+                                updatedProduct.setPrice( productEntity.getPrice() );
+                                updatedProduct.setName( productEntity.getName() );
+
+                                return exchangeIntegration.makeExchange( from,to )
+                                        .flatMap( exchangeRate -> {
+                                            updatedProduct.setPrice(productEntity.getPrice()
+                                                    .multiply( new BigDecimal(String.valueOf( exchangeRate ) ) ));
+                                            return productRepository.save( updatedProduct );
+                                        });
                             })
                 ).map( productSaved -> ProductResponseDTO.entityToResponse( productSaved, "USD" ) );
 
@@ -88,9 +95,21 @@ public class ProductService {
                         }));
     }
 
-    public Mono<Void> deleteMany( List<String> ids ) {
-        return productRepository.deleteAllById( ids );
+    public Mono<Void> deleteMany( List<String> ids, String storeId ) {
+        return productRepository.findAllById(ids)
+                .collectList()
+                .flatMap( products -> {
+                    boolean allMatch = products.stream()
+                            .allMatch( product -> product.getStoreId().equals( storeId ) );
+                    if ( allMatch ) {
+                        return productRepository.deleteAll(products);
+                    } else {
+                        return Mono.error(new AccessDeniedException(
+                                "You do not have permission to delete some of these products"));
+                    }
+                });
     }
+
 
     public Flux<ProductResponseDTO> getAllProductsRelatedStore( String storeId, String currency ) {
 
