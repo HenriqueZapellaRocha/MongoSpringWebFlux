@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
+@Document( "stores" )
 @Data
 @Builder
-@Document( collection = "stores" )
 public class StoreEntity {
 
     @Id
@@ -18,6 +18,12 @@ public class StoreEntity {
     @Indexed(unique = true)
     private String name;
 
-    @Indexed(unique = true)
+    private String description;
+    private String address;
+    private String city;
+    private String state;
+
+    @Indexed( unique = true )
     private String ownerId;
+
 }

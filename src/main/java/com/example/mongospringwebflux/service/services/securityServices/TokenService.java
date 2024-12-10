@@ -13,22 +13,19 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    // Método para gerar o token JWT de forma reativa
     public Mono<String> generateToke(UserEntity userEntity) {
         return Mono.defer(() -> {
             try {
                 Algorithm algorithm = Algorithm.HMAC256("VERYCRAZY");
-
-                // Gera o token de forma síncrona, mas encapsula em Mono.defer para garantir comportamento reativo
                 String token = JWT.create()
                         .withIssuer("aut.api")
                         .withSubject(userEntity.getLogin())
                         .withExpiresAt(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")))
                         .sign(algorithm);
 
-                return Mono.just(token); // Retorna o token gerado
+                return Mono.just(token);
             } catch (Exception e) {
-                return Mono.error(new RuntimeException("Erro ao gerar o token", e)); // Em caso de erro, retorna um erro Mono
+                return Mono.error(new RuntimeException("Erro ao gerar o token", e));
             }
         });
     }

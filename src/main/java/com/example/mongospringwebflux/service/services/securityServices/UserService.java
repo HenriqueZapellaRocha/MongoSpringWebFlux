@@ -1,7 +1,9 @@
 package com.example.mongospringwebflux.service.services.securityServices;
 
 import com.example.mongospringwebflux.repository.UserRepository;
+import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.StoreCreationRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.RegisterRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
@@ -25,29 +27,28 @@ public class UserService {
     private ReactiveAuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    public Mono<Object> register(RegisterRequestDTO registerRequest ) {
+    public Mono<Object> createUser(RegisterRequestDTO registerRequest, String storeId) {
         return userRepository.findByLogin(registerRequest.login())
                 .flatMap(existingUser -> Mono.error(new RuntimeException("User already exists")))
                 .switchIfEmpty(
                         Mono.just(registerRequest.password())
-                                .map(password -> new BCryptPasswordEncoder().encode(password))
+                                .map(password -> {
+                                    return new BCryptPasswordEncoder().encode(password);
+                                })
                                 .flatMap(encryptedPassword -> {
-                                    // Criação de um novo usuário
                                     UserEntity newUser = UserEntity.builder()
                                             .login(registerRequest.login())
                                             .password(encryptedPassword)
                                             .role(registerRequest.role())
-                                            .storeRelated(registerRequest.storeRelated())
+                                            .storeId(storeId)
                                             .build();
-
-                                    return userRepository.save(newUser)
-                                            .map(savedUser -> new RegisterResponseDTO(
-                                                    savedUser.getLogin(),
-                                                    savedUser.getLogin()
-                                            ));
+                                    return userRepository.save( newUser )
+                                            .map(savedUser -> new RegisterResponseDTO( savedUser.getLogin() ));
                                 })
                 );
     }
+
+
 
     public Mono<AuthResponseDTO> login(@RequestBody @Valid loginRequestDTO login) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(login.login(), login.password());

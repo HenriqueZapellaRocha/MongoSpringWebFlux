@@ -8,6 +8,7 @@ import java.util.List;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
+import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
@@ -24,16 +25,20 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ExchangeIntegration exchangeIntegration;
+    private final StoreRepository storeRepository;
 
-    public Mono<ProductResponseDTO> add(ProductRequestDTO product, String from, String to, UserEntity currentUser) {
+    public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to, UserEntity currentUser ) {
         ProductEntity productEntity = product.toEntity();
-        return exchangeIntegration.makeExchange( from, to )
-                .flatMap( exchangeRate -> {
-                    productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
-                    productEntity.setStoreId(currentUser.getStoreRelated());
-                    return productRepository.save( productEntity );
-                })
-                .map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
+
+        return storeRepository.findById(currentUser.getStoreId())
+                .flatMap(storeEntity -> {
+                    return exchangeIntegration.makeExchange( from,to )
+                            .flatMap( exchangeRate -> {
+                                productEntity.setPrice(product.price().multiply(new BigDecimal(String.valueOf(exchangeRate))));
+                                productEntity.setStoreId( storeEntity.getId() );
+                                return productRepository.save( productEntity );
+                            }).map( savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
+                });
     }
 
 

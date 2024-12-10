@@ -18,7 +18,7 @@ public class AuthService implements ReactiveUserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public Mono<UserDetails> findByUsername(String username) {
+    public Mono<UserDetails> findByUsername( String username ) {
         return userRepository.findByLogin( username );
     }
 

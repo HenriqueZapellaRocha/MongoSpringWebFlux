@@ -28,7 +28,7 @@ public class UserEntity implements UserDetails {
     private UserRoles role;
 
     @Indexed( unique = true )
-    private String storeRelated;
+    private String storeId;
 
 
     @Override

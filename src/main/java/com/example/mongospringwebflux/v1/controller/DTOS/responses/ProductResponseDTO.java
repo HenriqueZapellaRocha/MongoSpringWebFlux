@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.v1.controller.DTOS.responses;
 
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
+import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import lombok.Builder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
