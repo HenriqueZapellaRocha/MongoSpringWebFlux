@@ -4,10 +4,12 @@ package com.example.mongospringwebflux.v1.controller;
 import com.example.mongospringwebflux.service.services.AdminService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -36,6 +38,11 @@ public class AdminController {
     @DeleteMapping( "/product" )
     public Mono<Void> deleteProduct( @RequestBody List<String> ids ) {
         return adminService.deleteManyProducts( ids );
+    }
+
+    @GetMapping( "/users" )
+    public Flux<UserResponseDTO> getAllUsers() {
+        return adminService.getAllUsers();
     }
 
 

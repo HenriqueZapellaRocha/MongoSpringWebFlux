@@ -44,6 +44,8 @@ public class SecurityConfig {
                                                 .hasAuthority("ROLE_ADMIN")
                         .pathMatchers(HttpMethod.POST, "/admin/product")
                                                 .hasAuthority("ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.GET, "/admin/product")
+                        .hasAuthority("ROLE_ADMIN")
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )

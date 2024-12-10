@@ -7,10 +7,13 @@ import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.UserRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
+import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.List;
@@ -57,5 +60,10 @@ public class AdminService {
 
     public Mono<Void> deleteManyProducts( List<String> productIds ) {
         return productRepository.deleteAllById( productIds );
+    }
+
+    public Flux<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll()
+                .map( userEntity -> userEntity.entityToResponseDTO() );
     }
 }

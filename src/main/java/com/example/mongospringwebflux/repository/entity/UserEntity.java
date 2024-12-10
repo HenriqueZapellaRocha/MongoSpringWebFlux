@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.repository.entity;
 
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
+import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,5 +48,13 @@ public class UserEntity implements UserDetails {
     @Override
     public String getUsername() {
         return login;
+    }
+
+    public UserResponseDTO entityToResponseDTO() {
+        return UserResponseDTO.builder()
+                .login(this.getLogin())
+                .role(this.getRole())
+                .storeRelated(this.getStoreId() != null ? this.getStoreId() : "This user don't have store" )
+                .build();
     }
 }
