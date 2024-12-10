@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.v1.controller.DTOS.requests;
 
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,6 +12,8 @@ public record RegisterRequestDTO(
         String password,
         @NotNull(message = "role: role is blank")
         UserRoles role,
+
+        @Valid
         StoreCreationRequestDTO storeRelated
 
 ) {
