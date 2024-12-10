@@ -3,7 +3,7 @@ package com.example.mongospringwebflux.repository.entity.enums;
 
 public enum UserRoles {
 
-    ROLE_ADMIN( "ROLE_ADMIN" ),
+    ROLE_ADMIN( "admin" ),
     ROLE_STORE_ADMIN( "storeAdmin" ),
     ROLE_USER( "user" );
 

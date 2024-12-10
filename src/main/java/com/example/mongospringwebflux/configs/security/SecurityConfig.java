@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .pathMatchers(HttpMethod.POST, "/auth/register").permitAll()
+
                         .pathMatchers(HttpMethod.POST, "/product/add")
                                                 .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
                         .pathMatchers(HttpMethod.PUT, "/product**")
@@ -40,12 +41,9 @@ public class SecurityConfig {
                                             .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
                         .pathMatchers(HttpMethod.GET, "/store**")
                         .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
-                        .pathMatchers(HttpMethod.DELETE, "/admin**")
-                                                .hasAuthority("ROLE_ADMIN")
-                        .pathMatchers(HttpMethod.POST, "/admin/product")
-                                                .hasAuthority("ROLE_ADMIN")
-                        .pathMatchers(HttpMethod.GET, "/admin/product")
-                        .hasAuthority("ROLE_ADMIN")
+
+                        .pathMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )
