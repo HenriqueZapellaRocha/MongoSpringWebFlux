@@ -1,7 +1,7 @@
 package com.example.mongospringwebflux.configs.security;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,10 +39,12 @@ public class SecurityConfig {
                                                 .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
                         .pathMatchers(HttpMethod.GET, "/product**")
                                             .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
-                        .pathMatchers(HttpMethod.GET, "/store**")
-                        .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
 
-                        .pathMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.GET, "/store**")
+                                            .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
+
+                        .pathMatchers("/admin/**")
+                                            .hasAuthority("ROLE_ADMIN")
 
                         .anyExchange().authenticated()
                 )

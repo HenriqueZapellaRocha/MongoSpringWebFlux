@@ -7,7 +7,6 @@ import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductRespon
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

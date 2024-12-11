@@ -5,7 +5,6 @@ import com.example.mongospringwebflux.repository.UserRepository;
 import com.example.mongospringwebflux.service.services.securityServices.TokenService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
