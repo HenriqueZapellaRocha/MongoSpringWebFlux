@@ -9,16 +9,16 @@ import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
 import com.example.mongospringwebflux.service.services.securityServices.TokenService;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.containers.MongoDBContainer;
@@ -35,7 +35,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class AbstractBaseIntegrationTest {
 
     @Autowired
-    protected WebTestClient webTestClient;
+    public WebTestClient webTestClient;
 
     @Container
     @ServiceConnection
@@ -51,35 +51,35 @@ public class AbstractBaseIntegrationTest {
     protected StoreRepository storeRepository;
 
     @Autowired
-    protected TokenService tokenService;
+    public TokenService tokenService;
 
-    static String USER_TOKEN;
+    public String USER_TOKEN;
 
-    static String STORE_ADMIN_TOKEN;
+    public String STORE_ADMIN_TOKEN;
 
-    static String ADMIN_TOKEN;
+    public String ADMIN_TOKEN;
 
-    static StoreEntity STORE_ENTITY_TEST;
+    public StoreEntity STORE_ENTITY_TEST;
 
-    static UserEntity USER_ADMIN;
+    public UserEntity USER_ADMIN;
 
-    static UserEntity USER_NORMAL;
+    public UserEntity USER_NORMAL;
 
-    static UserEntity USER_STORE_ADMIN;
+    public UserEntity USER_STORE_ADMIN;
 
-    static ProductEntity PRODUCT_1;
-    static ProductEntity PRODUCT_2;
-    static ProductEntity PRODUCT_3;
+    public ProductEntity PRODUCT_1;
+    public ProductEntity PRODUCT_2;
+    public ProductEntity PRODUCT_3;
 
 
 
 
     @BeforeEach
-    void setupProducts(@Autowired ProductRepository productRepository) {
+    public void setupProducts() {
 
-        userRepository.deleteAll();
-        storeRepository.deleteAll();
-        productRepository.deleteAll();
+        userRepository.deleteAll().block();
+        storeRepository.deleteAll().block();
+        productRepository.deleteAll().block();
 
         UserEntity normalUser = UserEntity.builder()
                 .login( "NORMAL USER" )
@@ -150,11 +150,13 @@ public class AbstractBaseIntegrationTest {
 
     }
 
-    @Test
-    void contextLoads() {
-        assertThat(mongoDBContainer.isCreated()).isTrue();
-        assertThat(mongoDBContainer.isRunning()).isTrue();
+    @AfterEach
+    public void tearDown() {
+        // Limpar o contexto de segurança após cada teste, caso necessário
+        ReactiveSecurityContextHolder.clearContext();
     }
+
+
 
 }
 

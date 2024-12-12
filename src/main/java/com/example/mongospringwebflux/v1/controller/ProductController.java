@@ -56,7 +56,7 @@ public class ProductController {
     }
 
     @GetMapping( "/storeRelated/{id}" )
-    public Flux<ProductResponseDTO> allProductStoreRelated( @RequestParam( name = "currency" ) String currency,
+    public Flux<ProductResponseDTO> allProductStoreRelated( @RequestParam( name = "currency", required = true ) String currency,
                                                             @PathVariable String id ) {
         return productService.getAllProductsRelatedStore( id, currency );
     }
