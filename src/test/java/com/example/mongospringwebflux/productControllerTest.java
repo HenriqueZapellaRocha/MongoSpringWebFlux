@@ -1,19 +1,26 @@
 package com.example.mongospringwebflux;
 
+import com.example.mongospringwebflux.dtos.InvalidInputValuesExceptionDTO;
 import com.example.mongospringwebflux.dtos.NotFoundExceptionDTO;
+import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integrationTests.controllers.basicModels.AbstractBaseIntegrationTest;
+import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
-
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 
 
 public class productControllerTest extends AbstractBaseIntegrationTest {
+
 
     @Test
     public void test_getAllProducts_UnauthorizedUser_returnUnauthorized() {
@@ -34,6 +41,9 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
         ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse(PRODUCT_1, "USD");
         ProductResponseDTO PRODUCT_REQUEST_2 = ProductResponseDTO.entityToResponse(PRODUCT_2, "USD");
         ProductResponseDTO PRODUCT_REQUEST_3 = ProductResponseDTO.entityToResponse(PRODUCT_3, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/All")
@@ -112,6 +122,8 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
 
     @Test
     public void test_GetAllProducts_AuthorizedUser_() {
+        when(exchangeIntegration.makeExchange(anyString(), anyString())).
+                thenThrow( new NotFoundException( "Currency not found" ));
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/All")
@@ -149,6 +161,9 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     @Test
     public void test_GetByIdProduct_AuthorizedUser_returnOk() {
         ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse(PRODUCT_1, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/"+PRODUCT_1.getProductID())
@@ -200,7 +215,7 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    public void test_GetByIdProduct_AuthorizedUser_returnUnauthorized() {
+    public void test_GetByIdProduct_AuthorizedUser_sendWithoutCurrency_returnUnauthorized() {
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/"+PRODUCT_1.getProductID())
@@ -212,7 +227,10 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    public void test_GetByIdProduct_AuthorizedUser_ReturnNotFound() {
+    public void test_GetByIdProduct_AuthorizedUser_sendWithInvalidCurrency_ReturnNotFound() {
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString())).
+                thenThrow( new NotFoundException( "Currency not found" ));
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/"+PRODUCT_1.getProductID())
@@ -234,6 +252,9 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     @Test
     public void test_GetByIdProduct_dontExistTheProduct_AuthorizedUser_ReturnNotFound() {
 
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(2.0 ) );
+
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/product/"+"123")
                         .queryParam("currency", "--")
@@ -254,13 +275,20 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     // ADD PRODUCTS TESTS
 
     @Test
-    public void test_addProduct_AuthorizedUser_ReturnOkAndObjectCreated() {
+    public void test_addProduct_AuthorizedUser_saveProductInDb_ReturnOkAndObjectCreated() {
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(2.0 ) );
 
         ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
                 .name("NEW PRODUCT CREATED")
                 .price( new BigDecimal(200) )
                 .description("TEST")
                 .build();
+
+        ProductEntity productEntity = productRequestDTO.toEntity();
+
+        productEntity.setPrice(productEntity.getPrice().multiply( new BigDecimal( 2.0 ) ));
 
         webTestClient.post()
                 .uri(uriBuilder -> uriBuilder.path( "/product/add" )
@@ -280,7 +308,12 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
                     assert products.get( 0 ).name().equals( "NEW PRODUCT CREATED" );
                     assert products.get( 0 ).price().currency().equals( "USD" );
                     assert products.get( 0 ).description().equals( "TEST" );
+                    assert products.get( 0 ).price().value().equals( productEntity.getPrice());
                     assert products.get( 0 ).store().equals( USER_STORE_ADMIN.getStoreId() );
+
+                    assert products.get( 0 ).productID()
+                            .equals( productRepository
+                                    .findById( products.get( 0 ).productID() ).block().getProductID() );
 
                 });
     }
@@ -318,6 +351,9 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     @Test
     public void test_addProduct_AuthorizedUser_CurrencyNotFound() {
 
+        when(exchangeIntegration.makeExchange(anyString(), anyString())).
+                thenThrow( new NotFoundException( "Currency not found" ));
+
         ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
                 .name("NEW PRODUCT CREATED")
                 .price( new BigDecimal(200) )
@@ -340,6 +376,184 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
                     assert notFound != null;
                     assert notFound.get( 0 ).getError().equals( "Currency not found" );
                 });
+    }
+
+    @Test
+    public void test_addProduct_AuthorizedUser_invalidProduct_returnErrors() {
+
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
+                .name("")
+                .price( new BigDecimal(-200) )
+                .description("")
+                .build();
+
+        webTestClient.post()
+                .uri(uriBuilder -> uriBuilder.path( "/product/add" )
+                        .queryParam( "currency", "EUR" )
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .bodyValue(productRequestDTO)
+                .accept( MediaType.APPLICATION_JSON )
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBodyList( InvalidInputValuesExceptionDTO.class )
+                .consumeWith( response -> {
+                    List<InvalidInputValuesExceptionDTO> errors = response.getResponseBody();
+
+                    assert errors != null;
+                    assert errors.get(0).getErrors().contains( "description: blank description" );
+                    assert errors.get(0).getErrors().contains( "name: blank name" );
+                    assert errors.get(0).getErrors().contains( "price: negative number" );
+                });
+    }
+
+    @Test
+    public void test_getLast_withValidCookie_ReturnOkWithProduct() {
+        String expectedValue = PRODUCT_1.getProductID();
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(2.0 ) );
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + USER_TOKEN )
+                .cookie("last", expectedValue)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ProductResponseDTO.class)
+                .consumeWith(response -> {
+                    ProductResponseDTO productResponse = response.getResponseBody();
+
+                });
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + ADMIN_TOKEN )
+                .cookie("last", expectedValue)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ProductResponseDTO.class)
+                .consumeWith(response -> {
+                    ProductResponseDTO productResponse = response.getResponseBody();
+
+                });
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .cookie("last", expectedValue)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ProductResponseDTO.class)
+                .consumeWith(response -> {
+                    ProductResponseDTO productResponse = response.getResponseBody();
+
+                });
+    }
+
+    @Test
+    public void test_getLast_withInvalidCookie_ReturnError() {
+        String expectedValue = PRODUCT_1.getProductID();
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(2.0 ) );
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + USER_TOKEN )
+                .cookie("last", "12")
+                .exchange()
+                .expectStatus().isNotFound();
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + ADMIN_TOKEN )
+                .cookie("last", "12")
+                .exchange()
+                .expectStatus().isNotFound();
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/product/last")
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .cookie("last", "12")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    public void test_StoreRelatedProducts_returnOkAndProducts() {
+
+        ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse(PRODUCT_1, "USD");
+        ProductResponseDTO PRODUCT_REQUEST_2 = ProductResponseDTO.entityToResponse(PRODUCT_2, "USD");
+        ProductResponseDTO PRODUCT_REQUEST_3 = ProductResponseDTO.entityToResponse(PRODUCT_3, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/storeRelated/" + STORE_ENTITY_TEST.getId() )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList( ProductResponseDTO.class )
+                .consumeWith( response -> {
+                    List<ProductResponseDTO> products = response.getResponseBody();
+
+                    assert products.contains( PRODUCT_REQUEST_1 );
+                    assert products.contains( PRODUCT_REQUEST_2 );
+                    assert products.contains( PRODUCT_REQUEST_3 );
+
+                });
+
+    }
+
+    @Test
+    public void test_StoreRelatedProducts_returnNotFound() {
+
+        ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse(PRODUCT_1, "USD");
+        ProductResponseDTO PRODUCT_REQUEST_2 = ProductResponseDTO.entityToResponse(PRODUCT_2, "USD");
+        ProductResponseDTO PRODUCT_REQUEST_3 = ProductResponseDTO.entityToResponse(PRODUCT_3, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/storeRelated/" + "123" )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody( NotFoundExceptionDTO.class )
+                .consumeWith( response -> {
+                    NotFoundExceptionDTO message = response.getResponseBody();
+
+                    assert message.getError().equals( "No store found" );
+
+                });
+
     }
 
 

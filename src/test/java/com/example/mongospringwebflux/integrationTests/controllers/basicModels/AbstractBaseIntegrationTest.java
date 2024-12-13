@@ -1,5 +1,6 @@
 package com.example.mongospringwebflux.integrationTests.controllers.basicModels;
 
+import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.UserRepository;
@@ -10,10 +11,12 @@ import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
 import com.example.mongospringwebflux.service.services.securityServices.TokenService;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -36,6 +39,9 @@ public class AbstractBaseIntegrationTest {
 
     @Autowired
     public WebTestClient webTestClient;
+
+    @MockBean
+    public ExchangeIntegration exchangeIntegration;
 
     @Container
     @ServiceConnection

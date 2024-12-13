@@ -46,7 +46,7 @@ public class ProductController {
 
     @GetMapping( "/last" )
     public Mono<ProductResponseDTO> getLast( @CookieValue("last") String cookie,
-                                 @RequestParam( name = "currency" ) String currency ) {
+                                             @RequestParam( name = "currency" ) String currency ) {
         return productService.getById (cookie, "USD", currency );
     }
 
@@ -56,7 +56,7 @@ public class ProductController {
     }
 
     @GetMapping( "/storeRelated/{id}" )
-    public Flux<ProductResponseDTO> allProductStoreRelated( @RequestParam( name = "currency", required = true ) String currency,
+    public Flux<ProductResponseDTO> allProductStoreRelated( @RequestParam( name = "currency" ) String currency,
                                                             @PathVariable String id ) {
         return productService.getAllProductsRelatedStore( id, currency );
     }
