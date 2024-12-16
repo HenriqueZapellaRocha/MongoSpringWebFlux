@@ -28,7 +28,6 @@ public class UserEntity implements UserDetails {
     private String password;
     private UserRoles role;
 
-    @Indexed( unique = true )
     private String storeId;
 
 

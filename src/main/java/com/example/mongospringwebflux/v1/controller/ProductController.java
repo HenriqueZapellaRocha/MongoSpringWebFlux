@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.v1.controller;
 
 
+import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
 import com.example.mongospringwebflux.service.services.MinioService;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
@@ -27,8 +28,7 @@ import static com.google.common.io.Files.getFileExtension;
 public class ProductController {
 
     private final ProductService productService;
-
-    private final MinioService minioService;
+    private final ImageLogicFacade imageLogicFacade;
 
 
     @PostMapping( "/add" )
@@ -44,10 +44,8 @@ public class ProductController {
                                   @RequestPart("productId") String productId,
                                   @AuthenticationPrincipal UserEntity currentUser) {
 
-
-        return minioService.uploadFile( Mono.just(filePart), productId );
+        return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
     }
-
 
     @GetMapping( "/{id}" )
     public Mono<ProductResponseDTO> getById( @PathVariable String id,

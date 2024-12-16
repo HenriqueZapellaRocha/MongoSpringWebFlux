@@ -84,6 +84,7 @@ public class AbstractBaseIntegrationTest {
 
     @BeforeEach
     public void setupProducts() {
+
         userRepository.deleteAll().block();
         storeRepository.deleteAll().block();
         productRepository.deleteAll().block();
@@ -95,7 +96,7 @@ public class AbstractBaseIntegrationTest {
 
         UserEntity normalUser = UserEntity.builder()
                 .login("NORMAL USER")
-                .password(encodedNormalUserPassword)  // Usando a senha codificada
+                .password(encodedNormalUserPassword)
                 .storeId(null)
                 .role(UserRoles.ROLE_USER)
                 .build();

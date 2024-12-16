@@ -25,6 +25,17 @@ public record ProductResponseDTO(
                 .build();
     }
 
+    public static ProductResponseDTO entityToResponse( ProductEntity productEntity, String currency, String imageURL ) {
+        return ProductResponseDTO.builder()
+                .productID( productEntity.getProductID() )
+                .name( productEntity.getName() )
+                .price( new PriceResponse( currency, productEntity.getPrice() ) )
+                .description( productEntity.getDescription() )
+                .store( productEntity.getStoreId() )
+                .imageURL( imageURL )
+                .build();
+    }
+
     @Builder
     public record PriceResponse(
             String currency,

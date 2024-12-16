@@ -5,7 +5,6 @@ package com.example.mongospringwebflux.service.services;
 import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
@@ -27,12 +26,13 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ExchangeIntegration exchangeIntegration;
     private final StoreRepository storeRepository;
+    private final MinioService minioService;
 
     public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to, UserEntity currentUser ) {
         ProductEntity productEntity = product.toEntity();
 
         return storeRepository.findById( currentUser.getStoreId() )
-                .flatMap(storeEntity -> {
+                .flatMap( storeEntity -> {
                     return exchangeIntegration.makeExchange( from,to )
                             .flatMap( exchangeRate -> {
                                 productEntity.setPrice(product.price()
@@ -91,6 +91,24 @@ public class ProductService {
                             return ProductResponseDTO.entityToResponse( productEntity, to );
                         }));
     }
+
+//
+//    public Flux<ProductResponseDTO> getAll( String from, String to ) {
+//        return exchangeIntegration.makeExchange(from,to)
+//                .flatMapMany( exchangeRate -> productRepository.findAll()
+//                        .flatMap( productEntity -> {
+//                            productEntity.setPrice(
+//                                    productEntity.getPrice()
+//                                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
+//                           ProductResponseDTO productResponse = ProductResponseDTO
+//                                   .entityToResponse( productEntity, to );
+//
+//                           return minioService.getSignedImageUrl( productEntity.getProductID() )
+//                                   .map( signedUrl -> ProductResponseDTO
+//                                           .entityToResponse( productEntity, to, signedUrl ));
+//
+//                        }));
+//    }
 
     public Mono<Void> deleteMany( List<String> ids, String storeId ) {
         return productRepository.findAllById(ids)

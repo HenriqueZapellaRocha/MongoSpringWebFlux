@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux;
+package com.example.mongospringwebflux.integrationTests.controllers;
 
 import com.example.mongospringwebflux.dtos.InvalidInputValuesExceptionDTO;
 import com.example.mongospringwebflux.dtos.NotFoundExceptionDTO;
@@ -7,7 +7,6 @@ import com.example.mongospringwebflux.integrationTests.controllers.basicModels.A
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import java.math.BigDecimal;

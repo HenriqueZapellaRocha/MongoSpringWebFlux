@@ -17,7 +17,7 @@ public class StoreEntity {
     @Id
     private String id;
 
-    @Indexed(unique = true)
+    @Indexed( unique = true )
     private String name;
 
     private String description;
