@@ -210,14 +210,5 @@ public class AuthControllerTest extends AbstractBaseIntegrationTest {
 
                     assert exceptionDTO.getMessage().equals( "User already exists" );
                 });
-
     }
-
-
-
-
-
-
-
-
 }

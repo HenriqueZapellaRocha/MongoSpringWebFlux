@@ -16,10 +16,10 @@ public class MinioService {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public MinioService(@Value("${minio.url}") String endpoint,
-                        @Value("${minio.access.key}") String accessKey,
-                        @Value("${minio.secret.key}") String secretKey,
-                        @Value("${minio.bucket.name}") String bucketName) {
+    public MinioService(@Value( "${minio.url}" ) String endpoint,
+                        @Value( "${minio.access.key}" ) String accessKey,
+                        @Value( "${minio.secret.key}" ) String secretKey,
+                        @Value( "${minio.bucket.name}" ) String bucketName) {
         this.bucketName = bucketName;
         this.minioClient = MinioClient.builder()
                 .endpoint(endpoint)
@@ -29,19 +29,24 @@ public class MinioService {
 
     public Mono<Void> uploadFile(Mono<FilePart> file, String fileName) {
         return file
-                .subscribeOn( Schedulers.boundedElastic() )
-                .flatMap( filePart -> {
-                    File temp = new File( filePart.filename() );
-                    return filePart.transferTo( temp )
-                            .then( Mono.fromCallable(() -> {
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(filePart -> {
+                    File temp = new File(filePart.filename());
+                    return filePart.transferTo(temp)
+                            .then(Mono.fromCallable(() -> {
                                 UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
-                                        .bucket( bucketName )
-                                        .object( fileName )
-                                        .filename( temp.getAbsolutePath() )
+                                        .bucket(bucketName)
+                                        .object(fileName)
+                                        .filename(temp.getAbsolutePath())
                                         .build();
-                                return minioClient.uploadObject( uploadObjectArgs );
+                                return minioClient.uploadObject(uploadObjectArgs);
                             }))
-                            .then();
+                            .then(Mono.fromRunnable(() -> {
+
+                                if ( temp.exists() ) {
+                                    temp.delete();
+                                }
+                            }));
                 });
     }
 }

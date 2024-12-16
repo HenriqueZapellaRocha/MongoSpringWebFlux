@@ -18,6 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
+import static com.google.common.io.Files.getFileExtension;
 
 
 @RequiredArgsConstructor
@@ -43,7 +44,6 @@ public class ProductController {
                                   @RequestPart("productId") String productId,
                                   @AuthenticationPrincipal UserEntity currentUser) {
 
-        System.out.println( currentUser );
 
         return minioService.uploadFile( Mono.just(filePart), productId );
     }
