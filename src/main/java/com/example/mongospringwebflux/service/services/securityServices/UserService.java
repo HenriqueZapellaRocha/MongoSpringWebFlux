@@ -1,9 +1,7 @@
 package com.example.mongospringwebflux.service.services.securityServices;
 
 import com.example.mongospringwebflux.repository.UserRepository;
-import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.StoreCreationRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.RegisterRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
@@ -11,6 +9,7 @@ import com.example.mongospringwebflux.v1.controller.DTOS.requests.loginRequestDT
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +28,7 @@ public class UserService {
 
     public Mono<Object> createUser(RegisterRequestDTO registerRequest, String storeId) {
         return userRepository.findByLogin(registerRequest.login())
-                .flatMap(existingUser -> Mono.error(new RuntimeException("User already exists")))
+                .flatMap( existingUser -> Mono.error( new BadCredentialsException( "User already exists" ) ) )
                 .switchIfEmpty(
                         Mono.just(registerRequest.password())
                                 .map(password -> {
@@ -42,12 +41,10 @@ public class UserService {
                                             .role(registerRequest.role())
                                             .storeId(storeId)
                                             .build();
-                                    return userRepository.save( newUser )
-                                            .map(savedUser -> new RegisterResponseDTO( savedUser.getLogin() ));
-                                })
+                                    return userRepository.save(newUser);
+                                }).map(savedUser -> new RegisterResponseDTO(savedUser.getLogin()))
                 );
     }
-
 
 
     public Mono<AuthResponseDTO> login(@RequestBody @Valid loginRequestDTO login) {
@@ -59,7 +56,9 @@ public class UserService {
 
                     return tokenService.generateToke(user)
                             .map(token -> new AuthResponseDTO(token, user.getLogin()));
+                })
+                .onErrorResume( ex -> {
+                    return Mono.error( new BadCredentialsException( "Invalid username or password" ) );
                 });
     }
-
 }

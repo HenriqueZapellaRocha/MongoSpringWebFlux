@@ -14,7 +14,7 @@ public class WebClientConfig {
     @Value( "${api.key}" )
     private String apiKey;
 
-    @Bean
+    @Bean(name = "test")
     public WebClient restTemplate() {
         return WebClient.builder().baseUrl(baseUrl+apiKey).build();
     }

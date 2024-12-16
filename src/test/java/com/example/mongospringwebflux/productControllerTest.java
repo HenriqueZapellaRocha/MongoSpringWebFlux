@@ -529,7 +529,7 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
     }
 
     @Test
-    public void test_StoreRelatedProducts_returnNotFound() {
+    public void test_StoreRelatedProducts_authorizedUser_returnNotFound() {
 
         ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse(PRODUCT_1, "USD");
         ProductResponseDTO PRODUCT_REQUEST_2 = ProductResponseDTO.entityToResponse(PRODUCT_2, "USD");
@@ -553,8 +553,136 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
                     assert message.getError().equals( "No store found" );
 
                 });
-
     }
+
+    @Test
+    public void test_StoreRelatedProducts_authorizedUser_withoutCurrency_returnUnathorized() {
+
+        ProductResponseDTO PRODUCT_REQUEST_1 = ProductResponseDTO.entityToResponse( PRODUCT_1, "USD" );
+        ProductResponseDTO PRODUCT_REQUEST_2 = ProductResponseDTO.entityToResponse( PRODUCT_2, "USD" );
+        ProductResponseDTO PRODUCT_REQUEST_3 = ProductResponseDTO.entityToResponse( PRODUCT_3, "USD" );
+
+        when( exchangeIntegration.makeExchange( anyString(), anyString() ) )
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/storeRelated/" + STORE_ENTITY_TEST.getId() )
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    public void test_UpdateProducts_authorizedUser_returnOkAndProductUpdated() {
+
+        ProductRequestDTO productRequest = ProductRequestDTO.builder()
+                .name("PRODUCT UPDATED")
+                .description("NEW DESCRIPTION")
+                .price(new BigDecimal(200.00))
+                .build();
+
+        ProductEntity productEntity = productRequest.toEntity( PRODUCT_1.getProductID() );
+        productEntity.setStoreId( PRODUCT_1.getStoreId() );
+
+        ProductResponseDTO productResponseDTO = ProductResponseDTO.entityToResponse(productEntity, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/" + PRODUCT_1.getProductID() )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .bodyValue(  productRequest )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody( ProductResponseDTO.class )
+                .consumeWith( response -> {
+                    ProductResponseDTO productResponse = response.getResponseBody();
+
+                    assert productResponse.equals( productResponseDTO );
+                });
+    }
+
+    @Test
+    public void test_UpdateProducts_unathorizedUser_returnUnathorized() {
+
+        ProductRequestDTO productRequest = ProductRequestDTO.builder()
+                .name("PRODUCT UPDATED")
+                .description("NEW DESCRIPTION")
+                .price(new BigDecimal(200.00))
+                .build();
+
+        ProductEntity productEntity = productRequest.toEntity( PRODUCT_1.getProductID() );
+        productEntity.setStoreId( PRODUCT_1.getStoreId() );
+
+        ProductResponseDTO productResponseDTO = ProductResponseDTO.entityToResponse(productEntity, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/" + PRODUCT_1.getProductID() )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + USER_TOKEN )
+                .bodyValue(  productRequest )
+                .exchange()
+                .expectStatus().isUnauthorized();
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/" + PRODUCT_1.getProductID() )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + ADMIN_TOKEN )
+                .bodyValue(  productRequest )
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    public void test_UpdateProducts_authorizedUser_invalidProduct_returnOkAndProductUpdated() {
+
+        ProductRequestDTO productRequest = ProductRequestDTO.builder()
+                .name("PRODUCT UPDATED")
+                .description("NEW DESCRIPTION")
+                .price(new BigDecimal(200.00))
+                .build();
+
+        ProductEntity productEntity = productRequest.toEntity( PRODUCT_1.getProductID() );
+        productEntity.setStoreId( PRODUCT_1.getStoreId() );
+
+        ProductResponseDTO productResponseDTO = ProductResponseDTO.entityToResponse(productEntity, "USD");
+
+        when(exchangeIntegration.makeExchange(anyString(), anyString()))
+                .thenReturn(Mono.just(1.0 ) );
+
+        webTestClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path( "/product/" + "123" )
+                        .queryParam("currency", "USD")
+                        .build())
+                .header( "Authorization", "Bearer " + STORE_ADMIN_TOKEN )
+                .bodyValue(  productRequest )
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody( NotFoundExceptionDTO.class )
+                .consumeWith( response -> {
+                    NotFoundExceptionDTO message = response.getResponseBody();
+
+                    assert message.getError().equals( "No product found" );
+                });
+    }
+
+
+
+
 
 
 

@@ -7,6 +7,7 @@ import com.example.mongospringwebflux.dtos.NotFoundExceptionDTO;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Mono;
@@ -44,4 +45,13 @@ public class GlobalExceptionsHandlers {
     public Mono<GlobalExceptionDTO> handleAccessDenied(AccessDeniedException ex) {
         return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
     }
+
+    @ResponseBody
+    @ResponseStatus( HttpStatus.UNAUTHORIZED )
+    @ExceptionHandler( BadCredentialsException.class )
+    public Mono<GlobalExceptionDTO> handleAccessDenied( BadCredentialsException ex ) {
+        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+    }
+
+
 }

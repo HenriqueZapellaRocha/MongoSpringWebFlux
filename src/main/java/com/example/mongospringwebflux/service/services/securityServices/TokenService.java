@@ -3,6 +3,7 @@ package com.example.mongospringwebflux.service.services.securityServices;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -24,7 +25,7 @@ public class TokenService {
 
                 return Mono.just(token);
             } catch (Exception e) {
-                return Mono.error(new RuntimeException("Erro ao gerar o token", e));
+                return Mono.error( new GlobalException(e.getMessage()));
             }
         });
     }

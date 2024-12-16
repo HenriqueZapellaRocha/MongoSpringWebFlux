@@ -31,10 +31,10 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .pathMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
-                        .pathMatchers(HttpMethod.POST, "/product/add")
+                        .pathMatchers(HttpMethod.POST, "/product/**")
                                                 .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
-                        .pathMatchers(HttpMethod.PUT, "/product**")
-                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                        .pathMatchers(HttpMethod.PUT, "/product/**")
+                                                .hasAnyAuthority("ROLE_SUPERVISOR" )
                         .pathMatchers(HttpMethod.DELETE, "/product**")
                                                 .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
                         .pathMatchers(HttpMethod.GET, "/product**")

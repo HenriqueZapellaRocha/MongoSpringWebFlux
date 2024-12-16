@@ -20,6 +20,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -82,83 +84,89 @@ public class AbstractBaseIntegrationTest {
 
     @BeforeEach
     public void setupProducts() {
-
         userRepository.deleteAll().block();
         storeRepository.deleteAll().block();
         productRepository.deleteAll().block();
 
-        UserEntity normalUser = UserEntity.builder()
-                .login( "NORMAL USER" )
-                .password( "12345" )
-                .storeId( null )
-                .role( UserRoles.ROLE_USER )
-                        .build();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        USER_NORMAL = userRepository.save( normalUser ).block();
+
+        String encodedNormalUserPassword = passwordEncoder.encode("12345");
+
+        UserEntity normalUser = UserEntity.builder()
+                .login("NORMAL USER")
+                .password(encodedNormalUserPassword)  // Usando a senha codificada
+                .storeId(null)
+                .role(UserRoles.ROLE_USER)
+                .build();
+
+        USER_NORMAL = userRepository.save(normalUser).block();
 
         StoreEntity store = StoreEntity.builder()
-                .name( "STORE TEST" )
-                .description( "THIS IS A TEST STORE" )
-                .city( "PORTO ALEGRE" )
-                .address( "SANTA MARIA 490" )
-                .state( "RIO GRANDE DO SUL" )
+                .name("STORE TEST")
+                .description("THIS IS A TEST STORE")
+                .city("PORTO ALEGRE")
+                .address("SANTA MARIA 490")
+                .state("RIO GRANDE DO SUL")
                 .build();
 
         STORE_ENTITY_TEST = storeRepository.save(store).block();
 
+        String encodedStoreAdminPassword = passwordEncoder.encode("12345");
+
         UserEntity adminStore = UserEntity.builder()
-                .login( "STORE ADMIN USER" )
-                .password( "12345" )
-                .storeId( STORE_ENTITY_TEST.getId() )
-                .role( UserRoles.ROLE_STORE_ADMIN )
+                .login("STORE ADMIN USER")
+                .password(encodedStoreAdminPassword)  // Usando a senha codificada
+                .storeId(STORE_ENTITY_TEST.getId())
+                .role(UserRoles.ROLE_STORE_ADMIN)
                 .build();
 
-        USER_STORE_ADMIN = userRepository.save( adminStore ).block();
+        USER_STORE_ADMIN = userRepository.save(adminStore).block();
+
+        String encodedAdminPassword = passwordEncoder.encode("12345");
 
         UserEntity admin = UserEntity.builder()
-                .login( "ADMIN USER" )
-                .role( UserRoles.ROLE_ADMIN )
-                .password( "12345" )
-                .storeId( null )
+                .login("ADMIN USER")
+                .role(UserRoles.ROLE_ADMIN)
+                .password(encodedAdminPassword)
+                .storeId(null)
                 .build();
-        USER_ADMIN = userRepository.save( admin ).block();
+
+        USER_ADMIN = userRepository.save(admin).block();
 
         ProductEntity product1 = ProductEntity.builder()
-                .name( "PRODUCT 1" )
-                .description( "THIS IS A PRODUCT 1 CREATED FOR TESTS" )
-                .storeId( USER_STORE_ADMIN.getStoreId() )
-                .price( new BigDecimal( 100.0 ) )
+                .name("PRODUCT 1")
+                .description("THIS IS A PRODUCT 1 CREATED FOR TESTS")
+                .storeId(USER_STORE_ADMIN.getStoreId())
+                .price(new BigDecimal(100.0))
                 .build();
 
         ProductEntity product2 = ProductEntity.builder()
-                .name( "PRODUCT 2" )
-                .description( "THIS IS A PRODUCT 2 CREATED FOR TESTS" )
+                .name("PRODUCT 2")
+                .description("THIS IS A PRODUCT 2 CREATED FOR TESTS")
                 .storeId(USER_STORE_ADMIN.getStoreId())
                 .price(new BigDecimal(200.0))
                 .build();
 
         ProductEntity product3 = ProductEntity.builder()
-                .name( "PRODUCT 3" )
-                .description( "THIS IS A PRODUCT 3 CREATED FOR TESTS" )
-                .storeId( USER_STORE_ADMIN.getStoreId() )
-                .price( new BigDecimal( 300.0 ) )
+                .name("PRODUCT 3")
+                .description("THIS IS A PRODUCT 3 CREATED FOR TESTS")
+                .storeId(USER_STORE_ADMIN.getStoreId())
+                .price(new BigDecimal(300.0))
                 .build();
 
-        PRODUCT_1 = productRepository.save( product1 ).block();
-        PRODUCT_2 = productRepository.save( product2 ).block();
-        PRODUCT_3 = productRepository.save( product3 ).block();
+        PRODUCT_1 = productRepository.save(product1).block();
+        PRODUCT_2 = productRepository.save(product2).block();
+        PRODUCT_3 = productRepository.save(product3).block();
+
 
         USER_TOKEN = tokenService.generateToke(USER_NORMAL).block();
         STORE_ADMIN_TOKEN = tokenService.generateToke(USER_STORE_ADMIN).block();
         ADMIN_TOKEN = tokenService.generateToke(USER_ADMIN).block();
-
-
-
     }
 
     @AfterEach
     public void tearDown() {
-        // Limpar o contexto de segurança após cada teste, caso necessário
         ReactiveSecurityContextHolder.clearContext();
     }
 

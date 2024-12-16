@@ -1,11 +1,14 @@
 package com.example.mongospringwebflux.v1.controller;
 
+
+import com.example.mongospringwebflux.service.services.MinioService;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import jakarta.validation.Valid;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,18 +27,31 @@ public class ProductController {
 
     private final ProductService productService;
 
+    private final MinioService minioService;
+
 
     @PostMapping( "/add" )
     public Mono<ProductResponseDTO> add( @RequestBody @Valid ProductRequestDTO product,
-                                        @RequestParam( name = "currency" ) String currency,
-                                        @AuthenticationPrincipal UserEntity currentUser ) {
+                                         @RequestParam( name = "currency" ) String currency,
+                                         @AuthenticationPrincipal UserEntity currentUser ) {
 
         return productService.add( product,currency, "USD", currentUser );
     }
 
+    @PostMapping("/uploadProductImage")
+    public Mono<Void> uploadFile( @RequestPart("files") FilePart filePart,
+                                  @RequestPart("productId") String productId,
+                                  @AuthenticationPrincipal UserEntity currentUser) {
+
+        System.out.println( currentUser );
+
+        return minioService.uploadFile( Mono.just(filePart), productId );
+    }
+
+
     @GetMapping( "/{id}" )
     public Mono<ProductResponseDTO> getById( @PathVariable String id,
-                                        @RequestParam( name = "currency" ) String currency,
+                                             @RequestParam( name = "currency" ) String currency,
                                              ServerHttpResponse response ) {
 
         return productService.getById( id, "USD", currency )

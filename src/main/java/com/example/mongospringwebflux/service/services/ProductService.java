@@ -14,7 +14,6 @@ import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -65,8 +64,6 @@ public class ProductService {
                 .flatMap( existingProduct ->
                     Mono.just( existingProduct )
                             .filter( filterProduct -> filterProduct.getStoreId().equals( storeId ) )
-                            .switchIfEmpty( Mono.error(
-                                    new AccessDeniedException( "You don't have permission to update this item" ) ) )
                             .flatMap( updatedProduct -> {
 
                                 updatedProduct.setDescription( productEntity.getDescription() );

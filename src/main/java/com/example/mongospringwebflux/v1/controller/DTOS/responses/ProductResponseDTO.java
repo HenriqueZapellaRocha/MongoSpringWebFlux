@@ -1,7 +1,6 @@
 package com.example.mongospringwebflux.v1.controller.DTOS.responses;
 
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
-import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import lombok.Builder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +11,8 @@ public record ProductResponseDTO(
         String name,
         PriceResponse price,
         String description,
-        String store
+        String store,
+        String imageURL
 ) {
 
     public static ProductResponseDTO entityToResponse( ProductEntity productEntity, String currency ) {
