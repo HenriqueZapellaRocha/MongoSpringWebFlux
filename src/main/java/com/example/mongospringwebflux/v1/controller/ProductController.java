@@ -2,7 +2,6 @@ package com.example.mongospringwebflux.v1.controller;
 
 
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
-import com.example.mongospringwebflux.service.services.MinioService;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
@@ -19,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.LinkedList;
 import java.util.List;
-import static com.google.common.io.Files.getFileExtension;
+
 
 
 @RequiredArgsConstructor
@@ -46,6 +45,7 @@ public class ProductController {
 
         return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
     }
+
 
     @GetMapping( "/{id}" )
     public Mono<ProductResponseDTO> getById( @PathVariable String id,

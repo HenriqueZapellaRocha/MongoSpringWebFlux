@@ -21,6 +21,9 @@ public class ProductEntity {
     private String name;
     private BigDecimal price;
     private String description;
-
     private String storeId;
+
+    @Builder.Default
+    private Boolean hasImage = false;
+
 }

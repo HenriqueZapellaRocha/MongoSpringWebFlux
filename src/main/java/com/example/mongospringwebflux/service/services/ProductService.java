@@ -11,6 +11,8 @@ import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
+import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
+import com.example.mongospringwebflux.service.facades.MinioAdapter;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ExchangeIntegration exchangeIntegration;
     private final StoreRepository storeRepository;
-    private final MinioService minioService;
+    private final ImageLogicFacade imageLogicFacade;
 
     public Mono<ProductResponseDTO> add( ProductRequestDTO product, String from, String to, UserEntity currentUser ) {
         ProductEntity productEntity = product.toEntity();
@@ -51,8 +53,22 @@ public class ProductService {
                     product.setPrice( product.getPrice()
                             .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
                     return product;
-                }).map(savedProductEntity -> ProductResponseDTO.entityToResponse( savedProductEntity, to ) );
+
+                } ).flatMap( product -> {
+
+                    Mono<String> signedImageUrlMono = product.getHasImage()
+                            ? imageLogicFacade.getSignedImageUrl(product.getProductID())
+                            : Mono.empty();
+
+                    return signedImageUrlMono
+                            .map( signedUrl -> ProductResponseDTO.
+                                    entityToResponse(product, to, signedUrl ) )
+                            .defaultIfEmpty( ProductResponseDTO.entityToResponse(product, to) );
+                });
     }
+
+
+
 
     public Mono<ProductResponseDTO> update( ProductRequestDTO product, String id, String storeId,
                                             String from, String to ) {
@@ -81,34 +97,36 @@ public class ProductService {
 
     }
 
-    public Flux<ProductResponseDTO> getAll( String from, String to ) {
-        return exchangeIntegration.makeExchange(from,to)
-                .flatMapMany( exchangeRate -> productRepository.findAll()
-                        .map( productEntity -> {
-                            productEntity.setPrice(
-                                    productEntity.getPrice()
-                                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
-                            return ProductResponseDTO.entityToResponse( productEntity, to );
-                        }));
-    }
-
-//
 //    public Flux<ProductResponseDTO> getAll( String from, String to ) {
 //        return exchangeIntegration.makeExchange(from,to)
 //                .flatMapMany( exchangeRate -> productRepository.findAll()
-//                        .flatMap( productEntity -> {
+//                        .map( productEntity -> {
 //                            productEntity.setPrice(
 //                                    productEntity.getPrice()
 //                                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
-//                           ProductResponseDTO productResponse = ProductResponseDTO
-//                                   .entityToResponse( productEntity, to );
-//
-//                           return minioService.getSignedImageUrl( productEntity.getProductID() )
-//                                   .map( signedUrl -> ProductResponseDTO
-//                                           .entityToResponse( productEntity, to, signedUrl ));
-//
+//                            return ProductResponseDTO.entityToResponse( productEntity, to );
 //                        }));
 //    }
+
+
+    public Flux<ProductResponseDTO> getAll(String from, String to) {
+        return exchangeIntegration.makeExchange(from, to)
+                .flatMapMany(exchangeRate -> productRepository.findAll()
+                        .flatMap(productEntity -> {
+                            productEntity.setPrice(productEntity.getPrice()
+                                    .multiply(new BigDecimal(String.valueOf(exchangeRate))));
+
+                            Mono<String> signedImageUrlMono = productEntity.getHasImage()
+                                    ? imageLogicFacade.getSignedImageUrl(productEntity.getProductID())
+                                    : Mono.empty();
+
+                            return signedImageUrlMono
+                                    .map( signedUrl -> ProductResponseDTO.
+                                            entityToResponse(productEntity, to, signedUrl ) )
+                                    .defaultIfEmpty( ProductResponseDTO.entityToResponse(productEntity, to) );
+                        }));
+    }
+
 
     public Mono<Void> deleteMany( List<String> ids, String storeId ) {
         return productRepository.findAllById(ids)

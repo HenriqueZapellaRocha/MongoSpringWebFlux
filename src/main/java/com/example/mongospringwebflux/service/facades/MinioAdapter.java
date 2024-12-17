@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.service.services;
+package com.example.mongospringwebflux.service.facades;
 
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -14,12 +14,12 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class MinioService {
+public class MinioAdapter {
 
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public MinioService(@Value("${minio.url}") String endpoint,
+    public MinioAdapter(@Value("${minio.url}") String endpoint,
                         @Value("${minio.access.key}") String accessKey,
                         @Value("${minio.secret.key}") String secretKey,
                         @Value("${minio.bucket.name}") String bucketName) {
@@ -32,12 +32,13 @@ public class MinioService {
     }
 
     public Mono<Void> uploadFile(Mono<FilePart> file, String fileName) {
+
         return file
-                .subscribeOn(Schedulers.boundedElastic())
+                .subscribeOn( Schedulers.boundedElastic() )
                 .flatMap(filePart -> {
                     File temp = new File(filePart.filename());
                     return filePart.transferTo(temp)
-                            .then(Mono.fromCallable(() -> {
+                            .then( Mono.fromCallable(() -> {
                                 UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
                                         .bucket(bucketName)
                                         .object(fileName)
@@ -45,8 +46,7 @@ public class MinioService {
                                         .build();
                                 return minioClient.uploadObject(uploadObjectArgs);
                             }))
-                            .then(Mono.fromRunnable(() -> {
-
+                            .then( Mono.fromRunnable(() -> {
                                 if (temp.exists()) {
                                     temp.delete();
                                 }
@@ -54,7 +54,7 @@ public class MinioService {
                 });
     }
 
-    public Mono<String> getSignedImageUrl(String productId) {
+    public Mono<String> getSignedImageUrl( String productId ) {
 
         return Mono.fromCallable( () -> {
 

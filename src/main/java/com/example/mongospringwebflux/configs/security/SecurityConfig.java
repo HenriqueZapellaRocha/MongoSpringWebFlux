@@ -46,6 +46,9 @@ public class SecurityConfig {
                         .pathMatchers("/admin/**")
                                             .hasAuthority("ROLE_ADMIN")
 
+                        .pathMatchers( "/v3/api-docks/**", "swagger-ui/**", "swagger-ui.html" )
+                                                .permitAll()
+
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )
