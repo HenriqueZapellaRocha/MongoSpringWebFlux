@@ -46,10 +46,10 @@ public class SecurityConfig {
                         .pathMatchers("/admin/**")
                                             .hasAuthority("ROLE_ADMIN")
 
-                        .pathMatchers( "/v3/api-docks/**", "swagger-ui/**", "swagger-ui.html" )
+                        .pathMatchers( "/v3/api-docks/**", "swagger-ui/**", "swagger-ui.html", "/swagger-ui.html"  )
                                                 .permitAll()
 
-                        .anyExchange().authenticated()
+                        .anyExchange().permitAll()
                 )
                 .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )
                 .build();
