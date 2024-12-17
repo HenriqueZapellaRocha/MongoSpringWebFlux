@@ -50,16 +50,16 @@ MongoDB servers.**
 
 # How to Run
 
-To run the API, you need to start the MINIO docker, cloud config server and the API.
+To run the API, you need to start the MINIO docker container, cloud config server and the API.
 
 *To run the MINIO docker just use the docker compose send in this repository. 
 Use this code to run and stop de docker container:
 
 ```bash
-//to run
+#to run
 docker-compose up -d 
 
-//to stop 
+#to stop 
 docker-compose stop
 ```
 
@@ -68,4 +68,12 @@ docker-compose stop
 ```bash
 ./gradlew bootRun
 ```
+
+# Documentation 
+
+*This API uses opendoc API and swagger. 
+To see documentation run the application and type this url in your browser: 
+
+```bash
+http://localhost:8080/webjars/swagger-ui/index.html#/
 
