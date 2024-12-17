@@ -11,6 +11,7 @@ import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterRespo
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +32,9 @@ public class AuthController {
 
     @PostMapping( "/register" )
     public Mono<Object> register(@RequestBody @Valid RegisterRequestDTO registerRequest ) {
+
+        if( registerRequest.role() == UserRoles.ROLE_STORE_ADMIN && registerRequest.storeRelated() == null )
+            return Mono.error( new BadCredentialsException( "store in null" ));
 
         if ( registerRequest.role() == UserRoles.ROLE_STORE_ADMIN && registerRequest.storeRelated() != null ) {
             return storeService.createStore( registerRequest.storeRelated() )

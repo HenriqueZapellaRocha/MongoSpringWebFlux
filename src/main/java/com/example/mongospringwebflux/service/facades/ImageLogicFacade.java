@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.service.facades;
 
 
+import com.example.mongospringwebflux.adapters.MinioAdapter;
 import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.UserRepository;
 import com.example.mongospringwebflux.repository.entity.UserEntity;

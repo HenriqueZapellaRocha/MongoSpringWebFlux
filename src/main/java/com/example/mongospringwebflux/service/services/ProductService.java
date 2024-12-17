@@ -12,7 +12,6 @@ import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
-import com.example.mongospringwebflux.service.facades.MinioAdapter;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;

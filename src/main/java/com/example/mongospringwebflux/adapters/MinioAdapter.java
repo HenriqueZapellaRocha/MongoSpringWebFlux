@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.service.facades;
+package com.example.mongospringwebflux.adapters;
 
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -19,10 +19,10 @@ public class MinioAdapter {
     private final MinioClient minioClient;
     private final String bucketName;
 
-    public MinioAdapter(@Value("${minio.url}") String endpoint,
-                        @Value("${minio.access.key}") String accessKey,
-                        @Value("${minio.secret.key}") String secretKey,
-                        @Value("${minio.bucket.name}") String bucketName) {
+    public MinioAdapter( @Value("${minio.url}") String endpoint,
+                         @Value("${minio.access.key}") String accessKey,
+                         @Value("${minio.secret.key}") String secretKey,
+                         @Value("${minio.bucket.name}") String bucketName) {
 
         this.bucketName = bucketName;
         this.minioClient = MinioClient.builder()

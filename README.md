@@ -44,7 +44,7 @@ Here’s a list of the key dependencies used in this project:
 you can configure  it to run with other
 MongoDB servers.**
 
-**To storage the products images this API uses MINIO, like s3 buckets ( for more informations: https://min.io ).**
+**To storage the products images this API uses MINIO, like s3 buckets ( for more informations: https://min.io/docs/minio/container/index.html ).**
 
 ---
 

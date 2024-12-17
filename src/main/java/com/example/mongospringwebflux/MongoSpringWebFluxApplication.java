@@ -9,7 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "APIs", version = "1.0", description = "Documentation APIs v1.0"))
+@OpenAPIDefinition(
+        info = @Info(title = "Spring Web FLux Stores API", version = "1.0",
+                description = "This is a documentantion of: https://github.com/HenriqueZapellaRocha/MongoSpringWebFlux ") )
 public class MongoSpringWebFluxApplication {
 
     public static void main(String[] args) {
