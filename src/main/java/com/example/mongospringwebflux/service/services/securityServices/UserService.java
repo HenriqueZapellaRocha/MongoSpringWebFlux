@@ -26,7 +26,7 @@ public class UserService {
     private ReactiveAuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    public Mono<Object> createUser(RegisterRequestDTO registerRequest, String storeId) {
+    public Mono<Object> createUser( RegisterRequestDTO registerRequest, String storeId ) {
         return userRepository.findByLogin(registerRequest.login())
                 .flatMap( existingUser -> Mono.error( new BadCredentialsException( "User already exists" ) ) )
                 .switchIfEmpty(
@@ -47,7 +47,7 @@ public class UserService {
     }
 
 
-    public Mono<AuthResponseDTO> login(@RequestBody @Valid loginRequestDTO login) {
+    public Mono<AuthResponseDTO> login( @RequestBody @Valid loginRequestDTO login ) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(login.login(), login.password());
 
         return authenticationManager.authenticate(usernamePassword)

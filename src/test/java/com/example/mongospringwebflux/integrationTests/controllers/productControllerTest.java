@@ -549,7 +549,7 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
                 .consumeWith( response -> {
                     NotFoundExceptionDTO message = response.getResponseBody();
 
-                    assert message.getError().equals( "No store found" );
+                    assert message.getError().equals( "No product found" );
 
                 });
     }
