@@ -146,7 +146,7 @@ public class ProductService {
     public Flux<ProductResponseDTO> getAllProductsRelatedStore( String storeId, String currency ) {
 
         return productRepository.getByStoreId( storeId )
-                .switchIfEmpty( Mono.error( new NotFoundException( "No store found" ) ) )
+                .switchIfEmpty( Mono.error( new NotFoundException( "No product found" ) ) )
                 .map( productEntity -> ProductResponseDTO.entityToResponse( productEntity, currency ) );
 
     }
