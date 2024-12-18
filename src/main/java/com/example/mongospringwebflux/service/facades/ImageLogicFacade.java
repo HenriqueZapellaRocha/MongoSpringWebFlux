@@ -4,6 +4,7 @@ package com.example.mongospringwebflux.service.facades;
 import com.example.mongospringwebflux.adapters.MinioAdapter;
 import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.UserRepository;
+import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +40,11 @@ public class ImageLogicFacade {
         return minioAdapter.getSignedImageUrl( productId );
     }
 
-    public Mono<Void> deleteImage( String productId ) {
-        return minioAdapter.deleteFile( productId );
+    public Mono<Void> deleteImage( ProductEntity product ) {
+
+        if( product.getHasImage() )
+            return minioAdapter.deleteFile( product.getProductID() );
+
+        return Mono.empty();
     }
 }

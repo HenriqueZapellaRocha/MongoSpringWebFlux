@@ -5,6 +5,8 @@ package com.example.mongospringwebflux.service.services;
 import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+
+import com.example.mongospringwebflux.adapters.MinioAdapter;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
@@ -120,7 +122,8 @@ public class ProductService {
         return productRepository.findAllById( ids )
                 .filter( productEntities -> productEntities.getStoreId().equals( storeId ) )
                 .switchIfEmpty( Mono.error( new NotFoundException( "No product found" ) ) )
-                .flatMap(productRepository::delete)
+                .flatMap( product -> productRepository.delete( product )
+                        .then( imageLogicFacade.deleteImage( product ) ))
                 .then();
     }
 
