@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.service.services;
 
 
+import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
@@ -53,7 +54,8 @@ public class AdminService {
                             userRepository.delete( userEntity ),
                             storeRepository.deleteById( userEntity.getStoreId() ),
                             productRepository.deleteAllByStoreId( storeId )
-                    );
+
+                    ).onErrorResume( e -> Mono.error( new GlobalException( "Error deleting user" )) );
                 });
     }
 

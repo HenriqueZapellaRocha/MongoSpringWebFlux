@@ -7,7 +7,6 @@ import com.example.mongospringwebflux.service.services.securityServices.UserServ
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.RegisterRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.loginRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;

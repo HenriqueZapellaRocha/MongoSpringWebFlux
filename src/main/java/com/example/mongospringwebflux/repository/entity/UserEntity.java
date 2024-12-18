@@ -22,6 +22,7 @@ public class UserEntity implements UserDetails {
 
     @Id
     private String id;
+
     @Indexed( unique = true )
     private String login;
 

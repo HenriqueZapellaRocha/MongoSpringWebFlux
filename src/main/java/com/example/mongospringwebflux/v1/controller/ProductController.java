@@ -87,13 +87,11 @@ public class ProductController {
     @DeleteMapping( "/{id}" )
     public Mono<Void> deleteById( @PathVariable String id,
                                   @AuthenticationPrincipal UserEntity currentUser ) {
-        final LinkedList<String> ids = new LinkedList<>();
-        ids.add( id );
-        return productService.deleteMany( ids, currentUser.getStoreId() );
+        return productService.deleteMany( Flux.just( id ), currentUser.getStoreId() );
     }
 
     @DeleteMapping
-    public Mono<Void> deleteMany( @RequestBody List<String> id,
+    public Mono<Void> deleteMany( @RequestBody Flux<String> id,
                                   @AuthenticationPrincipal UserEntity currentUser ) {
         return productService.deleteMany( id, currentUser.getStoreId() );
     }

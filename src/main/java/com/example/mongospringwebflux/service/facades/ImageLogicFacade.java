@@ -38,4 +38,8 @@ public class ImageLogicFacade {
     public Mono<String> getSignedImageUrl( String productId ) {
         return minioAdapter.getSignedImageUrl( productId );
     }
+
+    public Mono<Void> deleteImage( String productId ) {
+        return minioAdapter.deleteFile( productId );
+    }
 }

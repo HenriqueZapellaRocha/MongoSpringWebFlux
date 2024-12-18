@@ -4,6 +4,7 @@ package com.example.mongospringwebflux.handler;
 import com.example.mongospringwebflux.dtos.GlobalExceptionDTO;
 import com.example.mongospringwebflux.dtos.InvalidInputValuesExceptionDTO;
 import com.example.mongospringwebflux.dtos.NotFoundExceptionDTO;
+import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,13 @@ public class GlobalExceptionsHandlers {
     @ResponseStatus( HttpStatus.UNAUTHORIZED )
     @ExceptionHandler( BadCredentialsException.class )
     public Mono<GlobalExceptionDTO> handleAccessDenied( BadCredentialsException ex ) {
+        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+    }
+
+    @ResponseBody
+    @ResponseStatus( HttpStatus.UNAUTHORIZED )
+    @ExceptionHandler( GlobalException.class )
+    public Mono<GlobalExceptionDTO> handleAccessDenied( GlobalException ex ) {
         return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
     }
 

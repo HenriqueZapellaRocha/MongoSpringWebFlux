@@ -15,19 +15,19 @@ public class openDocCongif {
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
-        final String apiTitle = String.format("%s API", StringUtils.capitalize("Spring web flux Stores API"));
+        final String apiTitle = String.format( "%s API", StringUtils.capitalize( "Spring web flux Stores API" ) );
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(
                         new Components()
-                                .addSecuritySchemes(securitySchemeName,
+                                .addSecuritySchemes( securitySchemeName,
                                         new SecurityScheme()
-                                                .name(securitySchemeName)
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                                .bearerFormat("JWT")
+                                                .name( securitySchemeName )
+                                                .type( SecurityScheme.Type.HTTP )
+                                                .scheme( "bearer" )
+                                                .bearerFormat( "JWT" )
                                 )
                 )
-                .info(new Info().title(apiTitle).version("1"));
+                .info( new Info().title( apiTitle ).version( "1" ) );
     }
 }

@@ -96,18 +96,6 @@ public class ProductService {
 
     }
 
-//    public Flux<ProductResponseDTO> getAll( String from, String to ) {
-//        return exchangeIntegration.makeExchange(from,to)
-//                .flatMapMany( exchangeRate -> productRepository.findAll()
-//                        .map( productEntity -> {
-//                            productEntity.setPrice(
-//                                    productEntity.getPrice()
-//                                            .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
-//                            return ProductResponseDTO.entityToResponse( productEntity, to );
-//                        }));
-//    }
-
-
     public Flux<ProductResponseDTO> getAll(String from, String to) {
         return exchangeIntegration.makeExchange(from, to)
                 .flatMapMany(exchangeRate -> productRepository.findAll()
@@ -127,19 +115,13 @@ public class ProductService {
     }
 
 
-    public Mono<Void> deleteMany( List<String> ids, String storeId ) {
-        return productRepository.findAllById(ids)
-                .collectList()
-                .flatMap( products -> {
-                    boolean allMatch = products.stream()
-                            .allMatch( product -> product.getStoreId().equals( storeId ) );
-                    if ( allMatch ) {
-                        return productRepository.deleteAll(products);
-                    } else {
-                        return Mono.error(new AccessDeniedException(
-                                "You do not have permission to delete some of these products"));
-                    }
-                });
+    public Mono<Void> deleteMany( Flux<String> ids, String storeId ) {
+
+        return productRepository.findAllById( ids )
+                .filter( productEntities -> productEntities.getStoreId().equals( storeId ) )
+                .switchIfEmpty( Mono.error( new NotFoundException( "No product found" ) ) )
+                .flatMap(productRepository::delete)
+                .then();
     }
 
 
