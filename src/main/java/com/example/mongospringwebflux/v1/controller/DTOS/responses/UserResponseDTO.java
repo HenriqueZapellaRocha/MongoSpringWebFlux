@@ -9,6 +9,7 @@ import lombok.Builder;
 @Builder
 public record UserResponseDTO(
 
+        String id,
         String login,
         UserRoles role,
         String storeRelated

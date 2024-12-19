@@ -22,18 +22,18 @@ public class ImageLogicFacade {
     private final MinioAdapter minioAdapter;
     private final UserRepository userRepository;
 
-    public Mono<Void> validateAndPersistsImage( FilePart image, String productId, UserEntity currentUser ) {
+    public Mono<String> validateAndPersistsImage( FilePart image, String productId, UserEntity currentUser ) {
 
         return productRepository.getByStoreId( currentUser.getStoreId() )
                 .filter( product -> product.getProductID().equals( productId ) )
-                .switchIfEmpty( Mono.error(
-                        new BadCredentialsException( "This product don't exist or not related with this store" ) ) )
+                .switchIfEmpty( Mono.defer( () -> Mono.error(
+                        new BadCredentialsException( "This product don't exist or not related with this store" ) ) ))
                 .flatMap( product -> {
                     product.setImageUrl( "http://localhost:9000/product-images/"+product.getProductID() );
                     return productRepository.save( product );
                 } )
                 .flatMap( product -> minioAdapter.uploadFile( Mono.just( image ), product.getProductID() ) )
-                .then();
+                .then( Mono.just( "http://localhost:9000/product-images/"+productId ) );
     }
 
     public Mono<Void> deleteImage( ProductEntity product ) {

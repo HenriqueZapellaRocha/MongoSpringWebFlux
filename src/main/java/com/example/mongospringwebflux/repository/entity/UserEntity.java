@@ -55,6 +55,7 @@ public class UserEntity implements UserDetails {
                 .login(this.getLogin())
                 .role(this.getRole())
                 .storeRelated(this.getStoreId() != null ? this.getStoreId() : "This user don't have store" )
+                .id( this.getId() )
                 .build();
     }
 }

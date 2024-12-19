@@ -17,10 +17,11 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
 
-    public Mono<StoreEntity> createStore( StoreCreationRequestDTO storeRequest ) {
+    public Mono<StoreEntity> createStore( StoreCreationRequestDTO storeRequest, String id ) {
 
         return storeRepository.save(
                         StoreEntity.builder()
+                                .id( id )
                                 .name(storeRequest.name())
                                 .description(storeRequest.description())
                                 .address(storeRequest.address())

@@ -26,24 +26,24 @@ public class UserService {
     private ReactiveAuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    public Mono<Object> createUser( RegisterRequestDTO registerRequest, String storeId ) {
-        return userRepository.findByLogin(registerRequest.login())
-                .flatMap( existingUser -> Mono.error( new BadCredentialsException( "User already exists" ) ) )
-                .switchIfEmpty(
-                        Mono.just(registerRequest.password())
-                                .map(password -> {
-                                    return new BCryptPasswordEncoder().encode(password);
-                                })
-                                .flatMap(encryptedPassword -> {
-                                    UserEntity newUser = UserEntity.builder()
-                                            .login(registerRequest.login())
-                                            .password(encryptedPassword)
-                                            .role(registerRequest.role())
-                                            .storeId(storeId)
-                                            .build();
-                                    return userRepository.save(newUser);
-                                }).map(savedUser -> new RegisterResponseDTO(savedUser.getLogin()))
-                );
+    public Mono<RegisterResponseDTO> createUser( RegisterRequestDTO registerRequest, String storeId ) {
+        return Mono.just( registerRequest )
+                .map( registerRequestDTO -> {
+                    return new BCryptPasswordEncoder().encode( registerRequestDTO.password() );
+                })
+                .flatMap( password -> {
+
+                    UserEntity newUser = UserEntity.builder()
+                            .login( registerRequest.login() )
+                            .password(password)
+                            .role( registerRequest.role() )
+                            .storeId( storeId )
+                            .build();
+
+                    return userRepository.save( newUser )
+                            .onErrorResume( e -> Mono.error( new BadCredentialsException( "user already exist" ) ) );
+                } )
+                .map(savedUser -> new RegisterResponseDTO( savedUser.getLogin() ));
     }
 
 

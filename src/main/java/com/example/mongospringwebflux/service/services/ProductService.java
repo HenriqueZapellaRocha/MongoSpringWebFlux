@@ -49,7 +49,7 @@ public class ProductService {
 
     public Mono<ProductResponseDTO> getById( String id, String from, String to ) {
         return productRepository.findById( id )
-                        .switchIfEmpty( Mono.error( new NotFoundException( "No product found" ) ) )
+                        .switchIfEmpty( Mono.defer( () -> Mono.error( new NotFoundException( "No product found" ) ) ))
                 .zipWith( exchangeIntegration.makeExchange( from,to ), ( product,exchangeRate ) -> {
                     product.setPrice( product.getPrice()
                             .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
@@ -95,12 +95,12 @@ public class ProductService {
                             productEntity.setPrice(productEntity.getPrice()
                                     .multiply(new BigDecimal(String.valueOf(exchangeRate))));
 
-                            return ProductResponseDTO.entityToResponse( productEntity, "USD" );
+                            return ProductResponseDTO.entityToResponse( productEntity, to );
                         }));
     }
 
 
-    public Mono<Void> deleteMany( Flux<String> ids, String storeId ) {
+    public Mono<Void> deleteMany( List<String> ids, String storeId ) {
 
         return productRepository.findAllById( ids )
                 .filter( productEntities -> productEntities.getStoreId().equals( storeId ) )

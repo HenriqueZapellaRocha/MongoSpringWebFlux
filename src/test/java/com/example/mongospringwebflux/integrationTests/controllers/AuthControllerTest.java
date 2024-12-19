@@ -10,6 +10,8 @@ import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseD
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 
 public class AuthControllerTest extends AbstractBaseIntegrationTest {
 
@@ -240,7 +242,7 @@ public class AuthControllerTest extends AbstractBaseIntegrationTest {
 
                     GlobalExceptionDTO exceptionDTO = globalException.getResponseBody();
 
-                    assert exceptionDTO.getMessage().equals( "This store already exists" );
+                    assert Objects.requireNonNull(exceptionDTO).getMessage().equals( "This store already exists" );
                 });
 
     }

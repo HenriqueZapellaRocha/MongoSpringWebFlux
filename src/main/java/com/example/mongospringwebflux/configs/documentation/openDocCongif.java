@@ -16,6 +16,7 @@ public class openDocCongif {
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
         final String apiTitle = String.format( "%s API", StringUtils.capitalize( "Spring web flux Stores API" ) );
+
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(

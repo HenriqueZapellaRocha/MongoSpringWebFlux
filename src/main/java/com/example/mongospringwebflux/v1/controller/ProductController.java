@@ -42,9 +42,9 @@ public class ProductController {
     }
 
     @PostMapping("/uploadProductImage")
-    public Mono<Void> uploadFile( @RequestPart("files") FilePart filePart,
-                                  @RequestPart("productId") String productId,
-                                  @AuthenticationPrincipal UserEntity currentUser ) {
+    public Mono<String> uploadFile( @RequestPart("files") FilePart filePart,
+                                    @RequestPart("productId") String productId,
+                                    @AuthenticationPrincipal UserEntity currentUser ) {
 
         if( FileNameUtils.getExtension( filePart.filename() ).equals( "png" ) ||
                 FileNameUtils.getExtension( filePart.filename() ).equals( "jpg" ) )
@@ -94,11 +94,11 @@ public class ProductController {
     @DeleteMapping( "/{id}" )
     public Mono<Void> deleteById( @PathVariable String id,
                                   @AuthenticationPrincipal UserEntity currentUser ) {
-        return productService.deleteMany( Flux.just( id ), currentUser.getStoreId() );
+        return productService.deleteMany( List.of(id), currentUser.getStoreId() );
     }
 
     @DeleteMapping
-    public Mono<Void> deleteMany( @RequestBody Flux<String> id,
+    public Mono<Void> deleteMany( @RequestBody List<String> id,
                                   @AuthenticationPrincipal UserEntity currentUser ) {
         return productService.deleteMany( id, currentUser.getStoreId() );
     }
