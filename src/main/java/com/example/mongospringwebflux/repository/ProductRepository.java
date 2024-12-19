@@ -13,5 +13,6 @@ public interface ProductRepository extends ReactiveMongoRepository<ProductEntity
 
     Flux<ProductEntity> getByStoreId( String storeId );
     Mono<Void> deleteAllByStoreId( String storeId );
+    Flux<ProductEntity> findAllByStoreId( String storeId );
 
 }
