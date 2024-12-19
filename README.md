@@ -69,11 +69,45 @@ docker-compose stop
 ./gradlew bootRun
 ```
 
+---
+
 # Documentation 
 
-*This API uses opendoc API and swagger. 
+* This API uses opendoc API and swagger. 
 To see documentation run the application and type this url in your browser: 
 
 ```bash
 http://localhost:8080/webjars/swagger-ui/index.html#/
+```
+
+---
+
+# Cloud config Config
+
+* This is example of config to get mongo configs in your cloud config: 
+
+```bash
+spring:
+  data:
+    mongo:
+    mongodb:
+      uri: EXAMPLE URI
+      database: EXAMPLE DATABASE
+
+api:
+  base:
+    url: EXAMPLE URL
+  key: EXAMPLE KEY
+  
+minio:
+  access:
+    key: admin
+  secret:
+    key: password
+  url: http://localhost:9000
+  bucket:
+    name: product-images
+
+```
+
 

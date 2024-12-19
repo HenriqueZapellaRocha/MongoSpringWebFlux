@@ -54,7 +54,7 @@ public class AdminService {
                     String storeId = userEntity.getStoreId();
 
                     return productRepository.findAllByStoreId( storeId )
-                            .flatMap(imageLogicFacade::deleteImage)
+                            .flatMap( imageLogicFacade::deleteImage )
                             .then(
                                     Mono.when(
                                             userRepository.delete( userEntity ),
