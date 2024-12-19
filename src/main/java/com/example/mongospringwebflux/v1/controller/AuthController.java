@@ -1,7 +1,6 @@
 package com.example.mongospringwebflux.v1.controller;
 
 
-import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
 import com.example.mongospringwebflux.service.facades.RegisterFacade;
 import com.example.mongospringwebflux.service.services.StoreService;
 import com.example.mongospringwebflux.service.services.securityServices.UserService;
@@ -11,7 +10,6 @@ import com.example.mongospringwebflux.v1.controller.DTOS.requests.loginRequestDT
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 

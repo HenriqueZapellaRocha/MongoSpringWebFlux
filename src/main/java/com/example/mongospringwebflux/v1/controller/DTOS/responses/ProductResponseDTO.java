@@ -22,6 +22,7 @@ public record ProductResponseDTO(
                 .price( new PriceResponse( currency, productEntity.getPrice() ) )
                 .description( productEntity.getDescription() )
                 .store( productEntity.getStoreId() )
+                .imageURL( productEntity.getImageUrl() )
                 .build();
     }
 

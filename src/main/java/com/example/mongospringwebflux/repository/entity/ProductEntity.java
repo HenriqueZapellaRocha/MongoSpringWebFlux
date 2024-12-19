@@ -24,6 +24,6 @@ public class ProductEntity {
     private String storeId;
 
     @Builder.Default
-    private Boolean hasImage = false;
+    private String imageUrl = "has no image";
 
 }

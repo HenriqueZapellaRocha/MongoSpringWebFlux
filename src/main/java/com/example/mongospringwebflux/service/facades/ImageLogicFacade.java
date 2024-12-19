@@ -29,20 +29,16 @@ public class ImageLogicFacade {
                 .switchIfEmpty( Mono.error(
                         new BadCredentialsException( "This product don't exist or not related with this store" ) ) )
                 .flatMap( product -> {
-                    product.setHasImage( true );
+                    product.setImageUrl( "http://localhost:9000/product-images/"+product.getProductID() );
                     return productRepository.save( product );
                 } )
                 .flatMap( product -> minioAdapter.uploadFile( Mono.just( image ), product.getProductID() ) )
                 .then();
     }
 
-    public Mono<String> getSignedImageUrl( String productId ) {
-        return minioAdapter.getSignedImageUrl( productId );
-    }
-
     public Mono<Void> deleteImage( ProductEntity product ) {
 
-        if( product.getHasImage() )
+        if( !product.getImageUrl().equals( "has no image" ) )
             return minioAdapter.deleteFile( product.getProductID() );
 
         return Mono.empty();

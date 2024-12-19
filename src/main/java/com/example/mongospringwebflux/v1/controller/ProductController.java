@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.v1.controller;
 
 
+import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
@@ -8,6 +9,8 @@ import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import jakarta.validation.Valid;
+import org.apache.commons.compress.compressors.FileNameUtil;
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,9 +44,13 @@ public class ProductController {
     @PostMapping("/uploadProductImage")
     public Mono<Void> uploadFile( @RequestPart("files") FilePart filePart,
                                   @RequestPart("productId") String productId,
-                                  @AuthenticationPrincipal UserEntity currentUser) {
+                                  @AuthenticationPrincipal UserEntity currentUser ) {
 
-        return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
+        if( FileNameUtils.getExtension( filePart.filename() ).equals( "png" ) ||
+                FileNameUtils.getExtension( filePart.filename() ).equals( "jpg" ) )
+            return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
+
+        return Mono.error( new GlobalException( "file type not suported" ) );
     }
 
 

@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @Builder
 public record ProductRequestDTO(
-        @NotBlank(message = "name: blank name")
+        @NotBlank( message = "name: blank name" )
         String name,
-        @NotNull(message = "price: blank price")
-        @Min(value = 0, message = "price: negative number")
+        @NotNull( message = "price: blank price" )
+        @Min( value = 0, message = "price: negative number" )
         BigDecimal price,
-        @NotBlank(message = "description: blank description")
+        @NotBlank( message = "description: blank description" )
         String description
 ) {
     public ProductRequestDTO {

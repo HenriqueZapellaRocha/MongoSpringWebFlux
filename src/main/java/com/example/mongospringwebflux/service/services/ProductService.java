@@ -53,18 +53,8 @@ public class ProductService {
                 .zipWith( exchangeIntegration.makeExchange( from,to ), ( product,exchangeRate ) -> {
                     product.setPrice( product.getPrice()
                             .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ) );
-                    return product;
+                    return ProductResponseDTO.entityToResponse( product, to );
 
-                } ).flatMap( product -> {
-
-                    Mono<String> signedImageUrlMono = product.getHasImage()
-                            ? imageLogicFacade.getSignedImageUrl(product.getProductID())
-                            : Mono.empty();
-
-                    return signedImageUrlMono
-                            .map( signedUrl -> ProductResponseDTO.
-                                    entityToResponse(product, to, signedUrl ) )
-                            .defaultIfEmpty( ProductResponseDTO.entityToResponse(product, to) );
                 });
     }
 
@@ -100,19 +90,12 @@ public class ProductService {
 
     public Flux<ProductResponseDTO> getAll(String from, String to) {
         return exchangeIntegration.makeExchange(from, to)
-                .flatMapMany(exchangeRate -> productRepository.findAll()
-                        .flatMap(productEntity -> {
+                .flatMapMany( exchangeRate -> productRepository.findAll()
+                        .map(productEntity -> {
                             productEntity.setPrice(productEntity.getPrice()
                                     .multiply(new BigDecimal(String.valueOf(exchangeRate))));
 
-                            Mono<String> signedImageUrlMono = productEntity.getHasImage()
-                                    ? imageLogicFacade.getSignedImageUrl(productEntity.getProductID())
-                                    : Mono.empty();
-
-                            return signedImageUrlMono
-                                    .map( signedUrl -> ProductResponseDTO.
-                                            entityToResponse(productEntity, to, signedUrl ) )
-                                    .defaultIfEmpty( ProductResponseDTO.entityToResponse(productEntity, to) );
+                            return ProductResponseDTO.entityToResponse( productEntity, "USD" );
                         }));
     }
 

@@ -55,7 +55,7 @@ public class GlobalExceptionsHandlers {
     }
 
     @ResponseBody
-    @ResponseStatus( HttpStatus.UNAUTHORIZED )
+    @ResponseStatus( HttpStatus.BAD_REQUEST )
     @ExceptionHandler( GlobalException.class )
     public Mono<GlobalExceptionDTO> handleAccessDenied( GlobalException ex ) {
         return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
