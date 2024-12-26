@@ -23,42 +23,42 @@ public class GlobalExceptionsHandlers {
     @ResponseStatus( HttpStatus.NOT_FOUND )
     @ResponseBody
     @ExceptionHandler( NotFoundException.class )
-    public Mono<NotFoundExceptionDTO> handler(final NotFoundException e ) {
+    public Mono<NotFoundExceptionDTO> handler( final NotFoundException e ) {
         return Mono.just( new  NotFoundExceptionDTO( e.getMessage() ));
     }
 
     @ResponseStatus( HttpStatus.BAD_REQUEST )
     @ExceptionHandler( WebExchangeBindException.class )
-    public Mono<InvalidInputValuesExceptionDTO> handleValidationException(WebExchangeBindException ex) {
+    public Mono<InvalidInputValuesExceptionDTO> handleValidationException( WebExchangeBindException ex ) {
         List<String> errorMessages = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .map( DefaultMessageSourceResolvable::getDefaultMessage )
                 .collect(Collectors.toList());
 
-        InvalidInputValuesExceptionDTO errorResponse = new InvalidInputValuesExceptionDTO(errorMessages);
+        InvalidInputValuesExceptionDTO errorResponse = new InvalidInputValuesExceptionDTO( errorMessages );
         return Mono.just(errorResponse);
     }
 
     @ResponseBody
     @ResponseStatus( HttpStatus.FORBIDDEN )
     @ExceptionHandler( AccessDeniedException.class )
-    public Mono<GlobalExceptionDTO> handleAccessDenied(AccessDeniedException ex) {
-        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+    public Mono<GlobalExceptionDTO> handleAccessDenied( AccessDeniedException ex ) {
+        return Mono.just( new GlobalExceptionDTO( ex.getMessage() ) );
     }
 
     @ResponseBody
     @ResponseStatus( HttpStatus.UNAUTHORIZED )
     @ExceptionHandler( BadCredentialsException.class )
     public Mono<GlobalExceptionDTO> handleAccessDenied( BadCredentialsException ex ) {
-        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+        return Mono.just( new GlobalExceptionDTO( ex.getMessage() ) );
     }
 
     @ResponseBody
     @ResponseStatus( HttpStatus.BAD_REQUEST )
     @ExceptionHandler( GlobalException.class )
     public Mono<GlobalExceptionDTO> handleAccessDenied( GlobalException ex ) {
-        return Mono.just(new GlobalExceptionDTO( ex.getMessage() ));
+        return Mono.just( new GlobalExceptionDTO( ex.getMessage() ) );
     }
 
 

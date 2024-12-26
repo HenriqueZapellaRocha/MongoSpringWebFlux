@@ -9,7 +9,6 @@ import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import jakarta.validation.Valid;
-import org.apache.commons.compress.compressors.FileNameUtil;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -47,7 +45,8 @@ public class ProductController {
                                     @AuthenticationPrincipal UserEntity currentUser ) {
 
         if( FileNameUtils.getExtension( filePart.filename() ).equals( "png" ) ||
-                FileNameUtils.getExtension( filePart.filename() ).equals( "jpg" ) )
+            FileNameUtils.getExtension( filePart.filename() ).equals( "jpg" ) ||
+            FileNameUtils.getExtension( filePart.filename() ).equals( "jpeg" ) )
             return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
 
         return Mono.error( new GlobalException( "file type not suported" ) );

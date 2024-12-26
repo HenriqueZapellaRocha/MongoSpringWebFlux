@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 @Component
 public class CookieService {
 
-    public static void setCookie(ServerHttpResponse response, String value) {
-        ResponseCookie cookie = ResponseCookie.from("last", value)
-                .httpOnly(true)
-                .path("/product/last")
+    public static void setCookie( ServerHttpResponse response, String value ) {
+        ResponseCookie cookie = ResponseCookie.from( "last", value )
+                .httpOnly( true )
+                .path( "/product/last" )
                 .build();
 
         response.addCookie(cookie);

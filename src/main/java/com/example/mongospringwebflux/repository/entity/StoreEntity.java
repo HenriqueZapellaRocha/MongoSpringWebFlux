@@ -1,12 +1,12 @@
 package com.example.mongospringwebflux.repository.entity;
 
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
+
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import reactor.core.publisher.Mono;
+
 
 
 @Document( "stores" )

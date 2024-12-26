@@ -28,9 +28,7 @@ public class UserService {
 
     public Mono<RegisterResponseDTO> createUser( RegisterRequestDTO registerRequest, String storeId ) {
         return Mono.just( registerRequest )
-                .map( registerRequestDTO -> {
-                    return new BCryptPasswordEncoder().encode( registerRequestDTO.password() );
-                })
+                .map( registerRequestDTO -> new BCryptPasswordEncoder().encode( registerRequestDTO.password() ))
                 .flatMap( password -> {
 
                     UserEntity newUser = UserEntity.builder()
@@ -43,22 +41,20 @@ public class UserService {
                     return userRepository.save( newUser )
                             .onErrorResume( e -> Mono.error( new BadCredentialsException( "user already exist" ) ) );
                 } )
-                .map(savedUser -> new RegisterResponseDTO( savedUser.getLogin() ));
+                .map( savedUser -> new RegisterResponseDTO( savedUser.getLogin() ));
     }
 
 
     public Mono<AuthResponseDTO> login( @RequestBody @Valid loginRequestDTO login ) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(login.login(), login.password());
+        var usernamePassword = new UsernamePasswordAuthenticationToken( login.login(), login.password() );
 
-        return authenticationManager.authenticate(usernamePassword)
+        return authenticationManager.authenticate( usernamePassword )
                 .flatMap(authentication -> {
                     UserEntity user = (UserEntity) authentication.getPrincipal();
 
                     return tokenService.generateToke(user)
                             .map(token -> new AuthResponseDTO(token, user.getLogin()));
                 })
-                .onErrorResume( ex -> {
-                    return Mono.error( new BadCredentialsException( "Invalid username or password" ) );
-                });
+                .onErrorResume( ex -> Mono.error( new BadCredentialsException( "Invalid username or password" ) ));
     }
 }

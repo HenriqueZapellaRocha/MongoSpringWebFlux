@@ -38,9 +38,9 @@ public record ProductRequestDTO(
 
     public ProductEntity toEntity() {
         return ProductEntity.builder()
-                .productID(UUID.randomUUID().toString())
-                .name(this.name)
-                .price(this.price)
+                .productID( UUID.randomUUID().toString() )
+                .name( this.name )
+                .price( this.price )
                 .description( this.description )
                 .build();
     }

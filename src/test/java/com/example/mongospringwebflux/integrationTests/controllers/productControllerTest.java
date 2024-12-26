@@ -660,7 +660,7 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
         ProductResponseDTO productResponseDTO = ProductResponseDTO.entityToResponse(productEntity, "USD");
 
         when(exchangeIntegration.makeExchange(anyString(), anyString()))
-                .thenReturn(Mono.just(1.0 ) );
+                .thenReturn( Mono.just(1.0 ) );
 
         webTestClient.put()
                 .uri(uriBuilder -> uriBuilder
@@ -678,14 +678,6 @@ public class productControllerTest extends AbstractBaseIntegrationTest {
                     assert message.getError().equals( "No product found" );
                 });
     }
-
-
-
-
-
-
-
-
 
 }
 

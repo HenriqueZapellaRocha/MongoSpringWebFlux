@@ -35,11 +35,11 @@ public class AdminService {
         ProductEntity productEntity = product.toEntity();
 
         return storeRepository.findById( storeId )
-                .switchIfEmpty( Mono.error( new NotFoundException( "The store don't exist" ) ) )
+                .switchIfEmpty( Mono.defer( () -> Mono.error( new NotFoundException( "The store don't exist" ) ) ) )
                 .flatMap( storeEntity -> exchangeIntegration.makeExchange( from,to )
                         .flatMap( exchangeRate -> {
                             productEntity.setPrice(product.price()
-                                    .multiply( new BigDecimal(String.valueOf( exchangeRate ) ) ));
+                                    .multiply( new BigDecimal( String.valueOf( exchangeRate ) ) ));
                             productEntity.setStoreId( storeEntity.getId() );
                             return productRepository.save( productEntity );
                         })
@@ -49,7 +49,7 @@ public class AdminService {
     public Mono<Void> deleteUserAndAllInformationRelated( String userId ) {
 
         return userRepository.findById( userId )
-                .switchIfEmpty( Mono.error(new NotFoundException( "User not found" ) ))
+                .switchIfEmpty( Mono.defer( () -> Mono.error(new NotFoundException( "User not found" ) )))
                 .flatMap( userEntity -> {
                     String storeId = userEntity.getStoreId();
 

@@ -25,7 +25,7 @@ public class StoreController {
     }
 
     @GetMapping( "/{id}" )
-    public Mono<StoreResponseDTO> getStoreById(@PathVariable String id) {
+    public Mono<StoreResponseDTO> getStoreById( @PathVariable String id ) {
         return storeService.getStoreById( id );
     }
 

@@ -26,8 +26,8 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(auth -> auth
+                .csrf( ServerHttpSecurity.CsrfSpec::disable )
+                .authorizeExchange( auth -> auth
                         .pathMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .pathMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
@@ -55,11 +55,9 @@ public class SecurityConfig {
                 .build();
     }
 
-
-
-
     @Bean
-    public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public ReactiveAuthenticationManager reactiveAuthenticationManager( ReactiveUserDetailsService userDetailsService,
+                                                                        PasswordEncoder passwordEncoder) {
         return new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService) {{
             setPasswordEncoder(passwordEncoder);
         }};

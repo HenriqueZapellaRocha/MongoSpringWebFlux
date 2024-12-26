@@ -18,10 +18,11 @@ public class TokenService {
             try {
                 Algorithm algorithm = Algorithm.HMAC256("VERYCRAZY");
                 String token = JWT.create()
-                        .withIssuer("aut.api")
-                        .withSubject(userEntity.getLogin())
-                        .withExpiresAt(LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00")))
-                        .sign(algorithm);
+                        .withIssuer( "aut.api" )
+                        .withSubject( userEntity.getLogin() )
+                        .withExpiresAt( LocalDateTime.now().plusHours(2)
+                                .toInstant(ZoneOffset.of("-03:00") ) )
+                        .sign( algorithm );
 
                 return Mono.just(token);
             } catch (Exception e) {
@@ -43,7 +44,7 @@ public class TokenService {
                 String login = jwt.getSubject();
                 return Mono.just(login);
             } catch (Exception e) {
-                return Mono.error( new RuntimeException("Erro ao validar o token", e) );
+                return Mono.error( new RuntimeException("Error to validate token", e) );
             }
         });
     }

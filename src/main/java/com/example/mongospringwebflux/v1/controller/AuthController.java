@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping( "/register" )
-    public Mono<RegisterResponseDTO> register(@RequestBody @Valid RegisterRequestDTO registerRequest ) {
+    public Mono<RegisterResponseDTO> register( @RequestBody @Valid RegisterRequestDTO registerRequest ) {
 
         return registerFacade.registerUser( registerRequest );
     }

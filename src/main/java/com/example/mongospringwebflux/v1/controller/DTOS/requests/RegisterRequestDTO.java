@@ -8,11 +8,11 @@ import lombok.Builder;
 
 @Builder
 public record RegisterRequestDTO(
-        @NotBlank(message = "login: blank login")
+        @NotBlank( message = "login: blank login" )
         String login,
-        @NotBlank(message = "password: blank pasword" )
+        @NotBlank( message = "password: blank pasword" )
         String password,
-        @NotNull(message = "role: role is blank")
+        @NotNull( message = "role: role is blank" )
         UserRoles role,
 
         @Valid

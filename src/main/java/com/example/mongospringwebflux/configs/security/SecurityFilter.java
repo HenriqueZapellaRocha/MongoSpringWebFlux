@@ -29,7 +29,7 @@ public class SecurityFilter implements WebFilter {
 
         String token = this.recoverToken( exchange );
 
-        if (token != null) {
+        if ( token != null ) {
             return tokenService.validateToke( token )
                     .flatMap( login -> userRepository.findByLogin( login )
                             .flatMap( user -> {

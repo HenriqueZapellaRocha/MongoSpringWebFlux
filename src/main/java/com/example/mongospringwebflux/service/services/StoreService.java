@@ -1,6 +1,5 @@
 package com.example.mongospringwebflux.service.services;
 
-import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.repository.StoreRepository;
 import com.example.mongospringwebflux.repository.entity.StoreEntity;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.StoreCreationRequestDTO;
@@ -22,11 +21,11 @@ public class StoreService {
         return storeRepository.save(
                         StoreEntity.builder()
                                 .id( id )
-                                .name(storeRequest.name())
-                                .description(storeRequest.description())
-                                .address(storeRequest.address())
-                                .city(storeRequest.city())
-                                .state(storeRequest.state())
+                                .name( storeRequest.name() )
+                                .description( storeRequest.description() )
+                                .address( storeRequest.address() )
+                                .city( storeRequest.city() )
+                                .state( storeRequest.state() )
                                 .build()
                 )
                 .onErrorResume( e -> Mono.error( new BadCredentialsException( "This store already exists" ) ) );
@@ -34,12 +33,11 @@ public class StoreService {
 
 
     public Flux<StoreResponseDTO> getAllStores() {
-        return storeRepository.findAll().map( storeEntity ->
-                StoreResponseDTO.entityToResponse( storeEntity ) );
+        return storeRepository.findAll().map( StoreResponseDTO::entityToResponse );
     }
 
     public Mono<StoreResponseDTO> getStoreById( String id ) {
         return storeRepository.findById( id )
-                .map(StoreResponseDTO::entityToResponse );
+                .map( StoreResponseDTO::entityToResponse );
     }
 }

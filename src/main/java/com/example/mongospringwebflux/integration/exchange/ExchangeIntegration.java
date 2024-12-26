@@ -16,17 +16,17 @@ import reactor.core.publisher.Mono;
 public class ExchangeIntegration {
 
     @Autowired
-    @Qualifier("test")
+    @Qualifier( "test" )
     private WebClient webClient;
 
     public Mono<Double> makeExchange( String from, String to ) {
 
         return webClient
                 .get()
-                .uri("/pair/{from}/{to}", from, to)
+                .uri( "/pair/{from}/{to}", from, to )
                 .retrieve()
-                .bodyToMono(ExchangeResponse.class)
-                .map(ExchangeResponse::conversion_rate)
-                    .onErrorResume(throwable -> Mono.error( new NotFoundException( "Currency not found" ) ) );
+                .bodyToMono( ExchangeResponse.class )
+                .map( ExchangeResponse::conversion_rate )
+                    .onErrorResume( throwable -> Mono.error( new NotFoundException( "Currency not found" ) ) );
     }
 }

@@ -26,9 +26,9 @@ public class AdminController {
     }
 
     @PostMapping( "/product/{storeId}" )
-    public Mono<ProductResponseDTO> addProduct(@PathVariable String storeId,
-                                               @RequestParam( name = "currency" ) String currency,
-                                               @RequestBody @Valid ProductRequestDTO productRequestDTO ) {
+    public Mono<ProductResponseDTO> addProduct( @PathVariable String storeId,
+                                                @RequestParam( name = "currency" ) String currency,
+                                                @RequestBody @Valid ProductRequestDTO productRequestDTO ) {
 
         return adminService.addProductToRelatedStore( productRequestDTO, currency, "USD", storeId  );
     }

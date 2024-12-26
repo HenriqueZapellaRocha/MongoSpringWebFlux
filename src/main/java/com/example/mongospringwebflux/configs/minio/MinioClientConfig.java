@@ -1,5 +1,6 @@
 package com.example.mongospringwebflux.configs.minio;
 
+import io.minio.MinioAsyncClient;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,15 +12,15 @@ public class MinioClientConfig {
 
     @Value( "${minio.url}" )
     private String endpoint;
-    @Value("${minio.access.key}")
+    @Value( "${minio.access.key}" )
     private String accessKey;
-    @Value("${minio.secret.key}")
+    @Value( "${minio.secret.key}" )
     private String secretKey;
 
     @Bean
-    public MinioClient minioClient() {
+    public MinioAsyncClient minioClient() {
 
-        return MinioClient.builder()
+        return MinioAsyncClient.builder()
                 .endpoint( endpoint )
                 .credentials( accessKey, secretKey )
                 .build();
