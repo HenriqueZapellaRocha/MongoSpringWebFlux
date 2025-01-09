@@ -8,6 +8,7 @@ import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class ImageLogicFacade {
 
     public Mono<String> validateAndPersistsImage( FilePart image, String productId, UserEntity currentUser ) {
 
+        String newFileName = productId + '.' + FileNameUtils.getExtension( image.filename() );
+
         return productRepository.getByStoreId( currentUser.getStoreId() )
                 .filter( product -> product.getProductID().equals( productId ) )
                 .switchIfEmpty( Mono.defer( () -> Mono.error(
@@ -32,8 +35,8 @@ public class ImageLogicFacade {
                     product.setImageUrl( "http://localhost:9000/product-images/"+product.getProductID() );
                     return productRepository.save( product );
                 } )
-                .flatMap( product -> minioAdapter.uploadFile( Mono.just( image ), product.getProductID() ) )
-                .then( Mono.just( "http://localhost:9000/product-images/"+productId ) );
+                .flatMap( product -> minioAdapter.uploadFile( Mono.just( image ), newFileName) )
+                .then( Mono.just( "http://localhost:9000/product-images/"+ newFileName ) );
     }
 
     public Mono<Void> deleteImage( ProductEntity product ) {
