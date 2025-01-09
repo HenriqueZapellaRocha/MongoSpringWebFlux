@@ -8,6 +8,10 @@ import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
+import com.example.mongospringwebflux.v1.controller.imageValidations.ExtensionValidator;
+import com.example.mongospringwebflux.v1.controller.imageValidations.ValidFileExtension;
+import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionValidatorFactory;
+import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionsEnum;
 import jakarta.validation.Valid;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
@@ -19,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
-
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
@@ -30,6 +34,15 @@ public class ProductController {
     private final ProductService productService;
     private final ImageLogicFacade imageLogicFacade;
 
+    public boolean validate( List<ExtensionValidator> strategies, String extension ) {
+
+        for ( ExtensionValidator strategy : strategies ) {
+            if ( strategy.isValid( extension ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @PostMapping( "/add" )
     public Mono<ProductResponseDTO> add( @RequestBody @Valid ProductRequestDTO product,
@@ -39,17 +52,12 @@ public class ProductController {
         return productService.add( product,currency, "USD", currentUser );
     }
 
-    @PostMapping("/uploadProductImage")
-    public Mono<String> uploadFile( @RequestPart("files") FilePart filePart,
+    @PostMapping( "/uploadProductImage" )
+    public Mono<String> uploadFile( @RequestPart("files") @ValidFileExtension FilePart filePart,
                                     @RequestPart("productId") String productId,
                                     @AuthenticationPrincipal UserEntity currentUser ) {
 
-        if( FileNameUtils.getExtension( filePart.filename() ).equals( "png" ) ||
-            FileNameUtils.getExtension( filePart.filename() ).equals( "jpg" ) ||
-            FileNameUtils.getExtension( filePart.filename() ).equals( "jpeg" ) )
-            return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
-
-        return Mono.error( new GlobalException( "file type not suported" ) );
+        return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
     }
 
 

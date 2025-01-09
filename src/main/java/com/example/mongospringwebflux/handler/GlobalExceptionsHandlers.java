@@ -9,8 +9,10 @@ import com.example.mongospringwebflux.exception.NotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import reactor.core.publisher.Mono;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -24,7 +26,7 @@ public class GlobalExceptionsHandlers {
     @ResponseBody
     @ExceptionHandler( NotFoundException.class )
     public Mono<NotFoundExceptionDTO> handler( final NotFoundException e ) {
-        return Mono.just( new  NotFoundExceptionDTO( e.getMessage() ));
+        return Mono.just( new NotFoundExceptionDTO( e.getMessage() ));
     }
 
     @ResponseStatus( HttpStatus.BAD_REQUEST )
@@ -61,5 +63,12 @@ public class GlobalExceptionsHandlers {
         return Mono.just( new GlobalExceptionDTO( ex.getMessage() ) );
     }
 
+
+    @ResponseBody
+    @ResponseStatus( HttpStatus.BAD_REQUEST )
+    @ExceptionHandler( HandlerMethodValidationException.class )
+    public Mono<GlobalExceptionDTO> handleAccessDenied( HandlerMethodValidationException ex ) {
+        return Mono.just( new GlobalExceptionDTO( "Invalid argument" ) );
+    }
 
 }

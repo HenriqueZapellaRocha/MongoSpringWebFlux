@@ -28,15 +28,15 @@ public class MinioAdapter {
     private String bucketName;
 
 
-    public Mono<Void> uploadFile(Mono<FilePart> file, String fileName) {
+    public Mono<Void> uploadFile( Mono<FilePart> file, String fileName ) {
 
-        return file.flatMap(filePart -> {
+        return file.flatMap( filePart -> {
             Flux<DataBuffer> dataBufferFlux = filePart.content();
 
             return DataBufferUtils.join(dataBufferFlux)
-                    .publishOn(Schedulers.boundedElastic())
+                    .publishOn( Schedulers.boundedElastic() )
                     .flatMap(dataBuffer -> {
-                        InputStream inputStream = new ByteArrayInputStream(dataBuffer.toByteBuffer().array());
+                        InputStream inputStream = new ByteArrayInputStream( dataBuffer.toByteBuffer().array() );
 
                         PutObjectArgs uploadObjectArgs = PutObjectArgs.builder()
                                 .bucket(bucketName)
@@ -55,10 +55,6 @@ public class MinioAdapter {
                     .onErrorResume(e -> Mono.error(new RuntimeException("Unexpected error during file upload", e)));
         });
     }
-
-
-
-
 
     public Mono<Void> deleteFile( String productId ) {
         return Mono.fromCallable( () -> {

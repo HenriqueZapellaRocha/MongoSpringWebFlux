@@ -20,7 +20,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping( "/user/{id}" )
     public Mono<Void> deleteUser( @PathVariable String id ) {
         return adminService.deleteUserAndAllInformationRelated( id );
     }
