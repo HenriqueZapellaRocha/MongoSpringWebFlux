@@ -1,5 +1,5 @@
 # Spring Boot Web Flux Products API 
-<img src="https://media.licdn.com/dms/image/v2/D5612AQGhS83VpBxWoA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1720550988047?e=1736380800&v=beta&t=gRNkoFT6IqPYo1rg9U_WOEM_bHeLv5KUup3UgtBR9s8" alt="Spring Boot Logo" width="200" height="100"/>
+<img src="https://miro.medium.com/v2/resize:fit:4800/format:webp/1*NRBC0wt4t_ThDKYeu4AW2Q.png" alt="Spring Boot Logo" width="200" height="100"/>
 
 
 
