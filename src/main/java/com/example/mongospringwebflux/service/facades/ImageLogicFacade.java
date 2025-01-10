@@ -14,6 +14,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Data
 @AllArgsConstructor
 @Service
@@ -41,8 +44,13 @@ public class ImageLogicFacade {
 
     public Mono<Void> deleteImage( ProductEntity product ) {
 
-        if( !product.getImageUrl().equals( "has no image" ) )
-            return minioAdapter.deleteFile( product.getProductID() );
+        Pattern pattern = Pattern.compile( "[^/]*$" );
+        Matcher matcher = pattern.matcher( product.getImageUrl() );
+
+
+
+        if( !product.getImageUrl().equals( "has no image" ) && matcher.find() )
+            return minioAdapter.deleteFile( matcher.group() );
 
         return Mono.empty();
     }

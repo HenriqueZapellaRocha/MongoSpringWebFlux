@@ -29,16 +29,6 @@ public class ProductController {
     private final ProductService productService;
     private final ImageLogicFacade imageLogicFacade;
 
-    public boolean validate( List<FileValidator> strategies, String extension ) {
-
-        for ( FileValidator strategy : strategies ) {
-            if ( strategy.isValid( extension ) ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @PostMapping( "/add" )
     public Mono<ProductResponseDTO> add( @RequestBody @Valid ProductRequestDTO product,
                                          @RequestParam( name = "currency" ) String currency,
