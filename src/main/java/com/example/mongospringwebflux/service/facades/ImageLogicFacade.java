@@ -32,7 +32,7 @@ public class ImageLogicFacade {
                 .switchIfEmpty( Mono.defer( () -> Mono.error(
                         new BadCredentialsException( "This product don't exist or not related with this store" ) ) ))
                 .flatMap( product -> {
-                    product.setImageUrl( "http://localhost:9000/product-images/"+product.getProductID() );
+                    product.setImageUrl( "http://localhost:9000/product-images/"+ newFileName );
                     return productRepository.save( product );
                 } )
                 .flatMap( product -> minioAdapter.uploadFile( Mono.just( image ), newFileName) )

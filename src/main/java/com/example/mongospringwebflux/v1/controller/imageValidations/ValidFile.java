@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = FileExtensionValidatorAspect.class)
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidFileExtension {
+public @interface ValidFile {
     String message() default "Invalid file extension";
 
     ExtensionsEnum[] allowedExtensions() default { ExtensionsEnum.PNG, ExtensionsEnum.JPG, ExtensionsEnum.JPEG };

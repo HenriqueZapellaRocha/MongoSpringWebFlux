@@ -1,19 +1,15 @@
 package com.example.mongospringwebflux.v1.controller;
 
 
-import com.example.mongospringwebflux.exception.GlobalException;
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import com.example.mongospringwebflux.v1.controller.imageValidations.ExtensionValidator;
-import com.example.mongospringwebflux.v1.controller.imageValidations.ValidFileExtension;
-import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionValidatorFactory;
-import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionsEnum;
+import com.example.mongospringwebflux.v1.controller.imageValidations.FileValidator;
+import com.example.mongospringwebflux.v1.controller.imageValidations.ValidFile;
 import jakarta.validation.Valid;
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
-import java.util.Objects;
 
 
 @RequiredArgsConstructor
@@ -34,9 +29,9 @@ public class ProductController {
     private final ProductService productService;
     private final ImageLogicFacade imageLogicFacade;
 
-    public boolean validate( List<ExtensionValidator> strategies, String extension ) {
+    public boolean validate( List<FileValidator> strategies, String extension ) {
 
-        for ( ExtensionValidator strategy : strategies ) {
+        for ( FileValidator strategy : strategies ) {
             if ( strategy.isValid( extension ) ) {
                 return true;
             }
@@ -53,7 +48,7 @@ public class ProductController {
     }
 
     @PostMapping( "/uploadProductImage" )
-    public Mono<String> uploadFile( @RequestPart("files") @ValidFileExtension FilePart filePart,
+    public Mono<String> uploadFile( @RequestPart("files") @ValidFile FilePart filePart,
                                     @RequestPart("productId") String productId,
                                     @AuthenticationPrincipal UserEntity currentUser ) {
 
@@ -67,9 +62,7 @@ public class ProductController {
                                              ServerHttpResponse response ) {
 
         return productService.getById( id, "USD", currency )
-                .doOnNext( product -> {
-                    CookieService.setCookie( response, product.productID() );
-                });
+                .doOnNext( product -> CookieService.setCookie( response, product.productID() ));
     }
 
     @GetMapping( "/last" )
