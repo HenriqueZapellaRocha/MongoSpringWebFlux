@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class RegisterFacade {
     private final StoreService storeService;
     private final UserService userService;
 
+    @Transactional
     public Mono<RegisterResponseDTO> registerUser(RegisterRequestDTO registerRequest ) {
 
         if( registerRequest.role() == UserRoles.ROLE_STORE_ADMIN && registerRequest.storeRelated() == null )

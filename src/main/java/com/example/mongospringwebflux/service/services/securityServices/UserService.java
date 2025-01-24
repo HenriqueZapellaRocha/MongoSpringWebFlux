@@ -14,6 +14,7 @@ import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
@@ -26,6 +27,7 @@ public class UserService {
     private ReactiveAuthenticationManager authenticationManager;
     private TokenService tokenService;
 
+    @Transactional
     public Mono<RegisterResponseDTO> createUser( RegisterRequestDTO registerRequest, String storeId ) {
         return Mono.just( registerRequest )
                 .map( registerRequestDTO -> new BCryptPasswordEncoder().encode( registerRequestDTO.password() ))

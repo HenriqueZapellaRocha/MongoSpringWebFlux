@@ -18,7 +18,7 @@ public class openDocCongif {
         final String apiTitle = String.format( "%s API", StringUtils.capitalize( "Spring web flux Stores API" ) );
 
         return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .addSecurityItem( new SecurityRequirement().addList( securitySchemeName ) )
                 .components(
                         new Components()
                                 .addSecuritySchemes( securitySchemeName,

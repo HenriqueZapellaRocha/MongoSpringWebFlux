@@ -7,8 +7,7 @@ import com.example.mongospringwebflux.service.services.CookieService;
 import com.example.mongospringwebflux.service.services.ProductService;
 import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import com.example.mongospringwebflux.v1.controller.imageValidations.FileValidator;
-import com.example.mongospringwebflux.v1.controller.imageValidations.ValidFile;
+import com.example.mongospringwebflux.v1.controller.imageValidations.interfaces.ValidFile;
 import jakarta.validation.Valid;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
-
 
 @RequiredArgsConstructor
 @RestController
@@ -38,8 +36,8 @@ public class ProductController {
     }
 
     @PostMapping( "/uploadProductImage" )
-    public Mono<String> uploadFile( @RequestPart("files") @ValidFile FilePart filePart,
-                                    @RequestPart("productId") String productId,
+    public Mono<String> uploadFile( @RequestPart( "files" ) @ValidFile FilePart filePart,
+                                    @RequestPart( "productId" ) String productId,
                                     @AuthenticationPrincipal UserEntity currentUser ) {
 
         return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
@@ -58,6 +56,7 @@ public class ProductController {
     @GetMapping( "/last" )
     public Mono<ProductResponseDTO> getLast( @CookieValue("last") String cookie,
                                              @RequestParam( name = "currency" ) String currency ) {
+
         return productService.getById (cookie, "USD", currency );
     }
 

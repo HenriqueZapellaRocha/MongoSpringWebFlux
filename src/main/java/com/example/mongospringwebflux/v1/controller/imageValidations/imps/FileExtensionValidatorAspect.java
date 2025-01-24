@@ -1,14 +1,14 @@
-package com.example.mongospringwebflux.v1.controller.imageValidations;
+package com.example.mongospringwebflux.v1.controller.imageValidations.imps;
 
 
 import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionValidatorFactory;
 import com.example.mongospringwebflux.v1.controller.imageValidations.factory.ExtensionsEnum;
+import com.example.mongospringwebflux.v1.controller.imageValidations.interfaces.ValidFile;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import java.util.Arrays;
-import java.util.Objects;
 
 
 
@@ -33,7 +33,6 @@ public class FileExtensionValidatorAspect implements ConstraintValidator<ValidFi
 
         return Arrays.stream(allowedExtensions)
                 .map( ExtensionValidatorFactory::factory )
-                .filter( Objects::nonNull )
                 .anyMatch( extensionValidator -> extensionValidator.isValid( extension ) );
     }
 }

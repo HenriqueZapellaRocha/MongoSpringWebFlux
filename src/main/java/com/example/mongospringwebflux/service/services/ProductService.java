@@ -57,7 +57,7 @@ public class ProductService {
         ProductEntity productEntity = product.toEntity( id );
 
         return productRepository.findById( id )
-                .switchIfEmpty(Mono.defer( () ->  Mono.error ( new NotFoundException( "No product found" ) ) ) )
+                .switchIfEmpty( Mono.defer( () ->  Mono.error ( new NotFoundException( "No product found" ) ) ) )
                 .filter( product1 -> product1.getStoreId().equals( storeId ) )
                 .zipWith( exchangeIntegration.makeExchange( from,to ) )
                 .flatMap( tuple -> {
@@ -66,7 +66,7 @@ public class ProductService {
                         tuple.getT1().setPrice( productEntity.getPrice() );
 
                         tuple.getT1().setPrice( productEntity.getPrice()
-                            .multiply( new BigDecimal(String.valueOf( tuple.getT2()) ) ));
+                            .multiply( new BigDecimal( String.valueOf( tuple.getT2()) ) ));
                     return productRepository.save( tuple.getT1() );
 
                  }).map( productSaved -> ProductResponseDTO.entityToResponse( productSaved, "USD" ) );
