@@ -12,7 +12,8 @@ public record ProductResponseDTO(
         PriceResponse price,
         String description,
         String store,
-        String imageURL
+        String imageURL,
+        Integer quantity
 ) {
 
     public static ProductResponseDTO entityToResponse( ProductEntity productEntity, String currency ) {
@@ -23,17 +24,7 @@ public record ProductResponseDTO(
                 .description( productEntity.getDescription() )
                 .store( productEntity.getStoreId() )
                 .imageURL( productEntity.getImageUrl() )
-                .build();
-    }
-
-    public static ProductResponseDTO entityToResponse( ProductEntity productEntity, String currency, String imageURL ) {
-        return ProductResponseDTO.builder()
-                .productID( productEntity.getProductID() )
-                .name( productEntity.getName() )
-                .price( new PriceResponse( currency, productEntity.getPrice() ) )
-                .description( productEntity.getDescription() )
-                .store( productEntity.getStoreId() )
-                .imageURL( imageURL )
+                .quantity( productEntity.getQuantity() )
                 .build();
     }
 

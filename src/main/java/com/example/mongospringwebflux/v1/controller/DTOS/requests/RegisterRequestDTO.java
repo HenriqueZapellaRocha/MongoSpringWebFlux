@@ -14,6 +14,8 @@ public record RegisterRequestDTO(
         String password,
         @NotNull( message = "role: role is blank" )
         UserRoles role,
+        @NotNull( message = "email: You must inform a email" )
+        String email,
 
         @Valid
         StoreCreationRequestDTO storeRelated

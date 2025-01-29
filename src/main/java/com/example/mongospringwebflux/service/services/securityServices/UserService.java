@@ -37,6 +37,7 @@ public class UserService {
                             .login( registerRequest.login() )
                             .password(password)
                             .role( registerRequest.role() )
+                            .userEmail( registerRequest.email() )
                             .storeId( storeId )
                             .build();
 

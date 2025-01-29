@@ -1,6 +1,7 @@
 package com.example.mongospringwebflux.v1.controller;
 
 
+import com.example.Person;
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.services.CookieService;
@@ -11,6 +12,7 @@ import com.example.mongospringwebflux.v1.controller.imageValidations.interfaces.
 import jakarta.validation.Valid;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
 
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping( "/product" )
@@ -26,6 +29,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ImageLogicFacade imageLogicFacade;
+
 
     @PostMapping( "/add" )
     public Mono<ProductResponseDTO> add( @RequestBody @Valid ProductRequestDTO product,
@@ -43,6 +47,20 @@ public class ProductController {
         return imageLogicFacade.validateAndPersistsImage( filePart, productId, currentUser );
     }
 
+//    @GetMapping("/person/{name}/{age}")
+//    public Mono<Void> person( @PathVariable String name,
+//                              @PathVariable Integer age ) {
+//
+//        return producerTemplate.send(
+//                "services","1", Person.newBuilder()
+//                                .setId( "1")
+//                                .setName( name )
+//                                .setAge( age )
+//                        .build()
+//        ).doOnNext(result -> System.out.println("Mensagem enviada: " + result.toString()))
+//                .then();
+//    }
+
 
     @GetMapping( "/{id}" )
     public Mono<ProductResponseDTO> getById( @PathVariable String id,
@@ -57,7 +75,7 @@ public class ProductController {
     public Mono<ProductResponseDTO> getLast( @CookieValue("last") String cookie,
                                              @RequestParam( name = "currency" ) String currency ) {
 
-        return productService.getById (cookie, "USD", currency );
+        return productService.getById( cookie, "USD", currency );
     }
 
     @GetMapping( "/All" )

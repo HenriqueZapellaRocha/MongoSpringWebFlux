@@ -32,28 +32,32 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
                         .pathMatchers(HttpMethod.POST, "/product/**")
-                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN", "ROLE_ADMIN")
                         .pathMatchers(HttpMethod.PUT, "/product/**")
-                                                .hasAnyAuthority("ROLE_SUPERVISOR" )
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN" )
                         .pathMatchers(HttpMethod.DELETE, "/product**")
-                                                .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN")
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN", "ROLE_ADMIN")
                         .pathMatchers(HttpMethod.GET, "/product**")
-                                            .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN", "ROLE_ADMIN", "ROLE_USER")
 
                         .pathMatchers(HttpMethod.GET, "/store**")
-                                            .hasAnyAuthority("ROLE_SUPERVISOR", "ROLE_ADMIN", "ROLE_USER")
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN", "ROLE_ADMIN", "ROLE_USER")
 
                         .pathMatchers("/admin/**")
                                             .hasAuthority("ROLE_ADMIN")
 
+                        .pathMatchers("/checkout**")
+                                            .hasAnyAuthority("ROLE_STORE_ADMIN", "ROLE_ADMIN", "ROLE_USER")
+
                         .pathMatchers( "/webjars/**", "/swagger-ui/**", "/v3/api-docs/**" )
-                                                .permitAll()
+                                            .permitAll()
 
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore( securityFilter, SecurityWebFiltersOrder.AUTHORIZATION )
                 .build();
     }
+
 
     @Bean
     public ReactiveAuthenticationManager reactiveAuthenticationManager( ReactiveUserDetailsService userDetailsService,

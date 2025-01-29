@@ -28,6 +28,7 @@ public class UserEntity implements UserDetails {
 
     private String password;
     private UserRoles role;
+    private String userEmail;
 
     private String storeId;
 
@@ -35,7 +36,7 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRoles.ROLE_STORE_ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_SUPERVISOR"),
+            return List.of(new SimpleGrantedAuthority("ROLE_STORE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_USER"));
         } else if (this.role == UserRoles.ROLE_ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),

@@ -19,7 +19,9 @@ public record ProductRequestDTO(
         @Min( value = 0, message = "price: negative number" )
         BigDecimal price,
         @NotBlank( message = "description: blank description" )
-        String description
+        String description,
+        @NotNull( message = "description: blank description" )
+        Integer quantity
 ) {
     public ProductRequestDTO {
         if ( price != null ) {
@@ -29,10 +31,11 @@ public record ProductRequestDTO(
 
     public ProductEntity toEntity( String id ) {
         return ProductEntity.builder()
-                .productID(id)
+                .productID( id )
                 .name( this.name )
                 .price( this.price )
                 .description( this.description )
+                .quantity( this.quantity )
                 .build();
     }
 
@@ -42,6 +45,7 @@ public record ProductRequestDTO(
                 .name( this.name )
                 .price( this.price )
                 .description( this.description )
+                .quantity( this.quantity )
                 .build();
     }
 }

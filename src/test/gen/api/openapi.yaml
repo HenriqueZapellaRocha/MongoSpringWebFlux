@@ -1,0 +1,885 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- description: Generated server url
+  url: http://localhost:8080
+paths:
+  /product/{id}:
+    delete:
+      operationId: deleteById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          description: OK
+      tags:
+      - product-controller
+      x-accepts: '*/*'
+    get:
+      operationId: getById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+          description: OK
+      tags:
+      - product-controller
+      x-accepts: '*/*'
+    put:
+      operationId: update
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequestDTO'
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+          description: OK
+      tags:
+      - product-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /product/uploadProductImage:
+    post:
+      operationId: uploadFile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/uploadFile_request'
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          description: OK
+      tags:
+      - product-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /product/add:
+    post:
+      operationId: add
+      parameters:
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequestDTO'
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+          description: OK
+      tags:
+      - product-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /auth/register:
+    post:
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequestDTO'
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+      tags:
+      - auth-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /auth/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequestDTO'
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponseDTO'
+          description: OK
+      tags:
+      - auth-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /admin/product/{storeId}:
+    post:
+      operationId: addProduct
+      parameters:
+      - explode: false
+        in: path
+        name: storeId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequestDTO'
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+          description: OK
+      tags:
+      - admin-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /store/{id}:
+    get:
+      operationId: getStoreById
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StoreResponseDTO'
+          description: OK
+      tags:
+      - store-controller
+      x-accepts: '*/*'
+  /store/all:
+    get:
+      operationId: getRelatedStores
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/StoreResponseDTO'
+                type: array
+          description: OK
+      tags:
+      - store-controller
+      x-accepts: '*/*'
+  /product/storeRelated/{id}:
+    get:
+      operationId: allProductStoreRelated
+      parameters:
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/ProductResponseDTO'
+                type: array
+          description: OK
+      tags:
+      - product-controller
+      x-accepts: '*/*'
+  /product/last:
+    get:
+      operationId: getLast
+      parameters:
+      - explode: true
+        in: cookie
+        name: last
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProductResponseDTO'
+          description: OK
+      tags:
+      - product-controller
+      x-accepts: '*/*'
+  /product/All:
+    get:
+      operationId: getAll
+      parameters:
+      - explode: true
+        in: query
+        name: currency
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/ProductResponseDTO'
+                type: array
+          description: OK
+      tags:
+      - product-controller
+      x-accepts: '*/*'
+  /admin/users:
+    get:
+      operationId: getAllUsers
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserResponseDTO'
+                type: array
+          description: OK
+      tags:
+      - admin-controller
+      x-accepts: '*/*'
+  /product:
+    delete:
+      operationId: deleteMany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          description: OK
+      tags:
+      - product-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /admin/user/{id}:
+    delete:
+      operationId: deleteUser
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          description: OK
+      tags:
+      - admin-controller
+      x-accepts: '*/*'
+  /admin/product:
+    delete:
+      operationId: deleteProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+        required: true
+      responses:
+        "404":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/NotFoundExceptionDTO'
+          description: Not Found
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvalidInputValuesExceptionDTO'
+          description: Bad Request
+        "401":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GlobalExceptionDTO'
+          description: Unauthorized
+        "200":
+          description: OK
+      tags:
+      - admin-controller
+      x-content-type: application/json
+      x-accepts: '*/*'
+components:
+  schemas:
+    NotFoundExceptionDTO:
+      properties:
+        error:
+          type: string
+      type: object
+    InvalidInputValuesExceptionDTO:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+      type: object
+    GlobalExceptionDTO:
+      properties:
+        message:
+          type: string
+      type: object
+    ProductRequestDTO:
+      example:
+        price: 0.08008281904610115
+        name: name
+        description: description
+      properties:
+        name:
+          type: string
+        price:
+          minimum: 0
+          type: number
+        description:
+          type: string
+      required:
+      - description
+      - name
+      - price
+      type: object
+    PriceResponse:
+      example:
+        currency: currency
+        value: 0.8008281904610115
+      properties:
+        currency:
+          type: string
+        value:
+          type: number
+      type: object
+    ProductResponseDTO:
+      example:
+        productID: productID
+        price:
+          currency: currency
+          value: 0.8008281904610115
+        imageURL: imageURL
+        name: name
+        description: description
+        store: store
+      properties:
+        productID:
+          type: string
+        name:
+          type: string
+        price:
+          $ref: '#/components/schemas/PriceResponse'
+        description:
+          type: string
+        store:
+          type: string
+        imageURL:
+          type: string
+      type: object
+    RegisterRequestDTO:
+      example:
+        password: password
+        role: ROLE_ADMIN
+        storeRelated:
+          address: address
+          city: city
+          name: name
+          description: description
+          state: state
+        login: login
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        role:
+          enum:
+          - ROLE_ADMIN
+          - ROLE_STORE_ADMIN
+          - ROLE_USER
+          type: string
+        storeRelated:
+          $ref: '#/components/schemas/StoreCreationRequestDTO'
+      required:
+      - login
+      - password
+      - role
+      type: object
+    StoreCreationRequestDTO:
+      example:
+        address: address
+        city: city
+        name: name
+        description: description
+        state: state
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+      required:
+      - address
+      - city
+      - description
+      - name
+      - state
+      type: object
+    loginRequestDTO:
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      required:
+      - login
+      - password
+      type: object
+    AuthResponseDTO:
+      example:
+        token: token
+        username: username
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+      type: object
+    StoreResponseDTO:
+      example:
+        city: city
+        name: name
+        id: id
+        state: state
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+      type: object
+    UserResponseDTO:
+      example:
+        role: ROLE_ADMIN
+        storeRelated: storeRelated
+        login: login
+      properties:
+        login:
+          type: string
+        role:
+          enum:
+          - ROLE_ADMIN
+          - ROLE_STORE_ADMIN
+          - ROLE_USER
+          type: string
+        storeRelated:
+          type: string
+      type: object
+    uploadFile_request:
+      properties:
+        files:
+          format: binary
+          type: string
+        productId:
+          type: string
+      required:
+      - files
+      - productId
+      type: object
+

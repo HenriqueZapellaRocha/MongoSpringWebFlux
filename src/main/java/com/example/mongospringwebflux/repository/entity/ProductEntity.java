@@ -21,6 +21,7 @@ public class ProductEntity {
     private BigDecimal price;
     private String description;
     private String storeId;
+    private Integer quantity;
 
     @Builder.Default
     private String imageUrl = "has no image";
