@@ -14,15 +14,16 @@ public class KafkaService {
 
     private final ReactiveKafkaProducerTemplate<String, CheckoutMessage> producerTemplate;
 
-    public Mono<Void> publishCheckoutMessage( UserEntity userEntity, String productId ) {
+    public Mono<Void> publishCheckoutMessage( UserEntity userEntity, String productId, Integer quantity ) {
         return producerTemplate.send(
 
                 "checkout-processing", UUID.randomUUID().toString(), CheckoutMessage.newBuilder()
-                                .setId( userEntity.getId() )
+                                .setUserId( userEntity.getId() )
                                 .setLogin( userEntity.getLogin() )
                                 .setRole( userEntity.getRole().getRole() )
                                 .setUserEmail( userEntity.getUserEmail() )
                                 .setProductId( productId )
+                                .setQuantity( quantity )
                         .build()
         ).then();
     }

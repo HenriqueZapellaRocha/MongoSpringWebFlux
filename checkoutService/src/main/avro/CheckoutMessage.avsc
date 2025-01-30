@@ -3,10 +3,11 @@
   "name": "CheckoutMessage",
   "namespace": "com.example.avro",
   "fields": [
-    { "name": "id", "type": "string" },
+    { "name": "userId", "type": "string" },
     { "name": "login", "type": "string" },
     { "name": "role", "type": "string" },
     { "name": "userEmail", "type": "string" },
-    { "name":  "productId", "type": "string"}
+    { "name":  "productId", "type": "string"},
+    { "name":  "quantity", "type": "int"}
     ]
     }

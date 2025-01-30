@@ -15,12 +15,12 @@ public class CheckoutFacade {
 
     private final KafkaService kafkaService;
 
-    public Mono<Void> checkout( UserEntity user, String productId ) {
+    public Mono<Void> checkout( UserEntity user, String productId, Integer quantity ) {
 
         return Mono.just( user )
                 .filter( userEntity -> ( userEntity.getRole().equals( UserRoles.ROLE_USER ) ) )
                 .switchIfEmpty( Mono.defer( () -> Mono.error( new BadCredentialsException( "Unathorized" ) ) ))
-                .then( kafkaService.publishCheckoutMessage( user, productId ) );
+                .then( kafkaService.publishCheckoutMessage( user, productId, quantity ) );
     }
 
 }

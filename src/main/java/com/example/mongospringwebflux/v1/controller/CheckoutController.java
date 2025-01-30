@@ -17,11 +17,12 @@ public class CheckoutController {
 
     private final CheckoutFacade checkoutFacade;
 
-    @GetMapping("/{productId}")
+    @GetMapping("/{productId}/{quantity}")
     public Mono<Void> checkout( @PathVariable String productId,
+                                @PathVariable Integer quantity,
                                 @AuthenticationPrincipal UserEntity currentUser ) {
 
-        return checkoutFacade.checkout( currentUser, productId );
+        return checkoutFacade.checkout( currentUser, productId, quantity );
     }
 
 }
