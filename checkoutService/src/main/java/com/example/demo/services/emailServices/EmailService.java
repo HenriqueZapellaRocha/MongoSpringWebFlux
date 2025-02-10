@@ -2,64 +2,63 @@ package com.example.demo.services.emailServices;
 
 import com.example.avro.CheckoutMessage;
 import com.example.demo.domain.models.ProductEntity;
-import jakarta.mail.internet.MimeMessage;
+import io.vertx.ext.mail.MailMessage;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import io.vertx.ext.mail.MailClient;
 
 @Service
 @Data
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final MailClient mailClient;
+
+    public Mono<Void> sendEmail( CheckoutMessage checkoutMessage, ProductEntity product, String checkoutId ) {
 
 
-    public Mono<Void> sendEmail(CheckoutMessage checkoutMessage, ProductEntity product, String checkoutId) {
 
-        return Mono.fromRunnable( () -> {
+        return templateLoader().map( template -> {
 
-            try {
-                MimeMessage mimeMessage = mailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-
-                helper.setFrom("noreply@mail.com");
-                helper.setSubject("checkout confirmation");
-                helper.setTo( checkoutMessage.getUserEmail() );
-
-                String template = templateLoader();
-
-                BigDecimal value = product.getPrice().multiply(new BigDecimal(checkoutMessage.getQuantity()))
-                        .setScale( 2, RoundingMode.HALF_UP );
+            BigDecimal value = product.getPrice().multiply(new BigDecimal(checkoutMessage.getQuantity()))
+                    .setScale( 2, RoundingMode.HALF_UP );
 
                 template = template.replace( "#{clientName}", checkoutMessage.getLogin() );
                 template = template.replace( "#{productName}", product.getName() );
                 template = template.replace( "#{checkoutId}", checkoutId );
                 template = template.replace( "#{value}", value.toString() );
-                helper.setText(template, true);
 
-                mailSender.send(mimeMessage);
-
-            }
-            catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+                return template;
 
         } )
-                .then()
-                .subscribeOn( Schedulers.boundedElastic() );
+                .flatMap(emailTemplate -> {
+                    MailMessage mailMessage = new MailMessage();
+                    mailMessage.setFrom("noreply@mail.com");
+                    mailMessage.setTo(checkoutMessage.getUserEmail());
+                    mailMessage.setSubject("Checkout Confirmation");
+                    mailMessage.setHtml(emailTemplate);
+
+                    return Mono.just( mailClient.sendMail(mailMessage) );
+                })
+                .then();
     }
 
-    public String templateLoader() throws IOException {
+    public Mono<String> templateLoader() {
         ClassPathResource resource = new ClassPathResource( "emailTemplate.html" );
-        return new String( resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8 );
+        return DataBufferUtils.read( resource, new DefaultDataBufferFactory(), 4096)
+                .map( dataBuffer -> {
+                    byte[] bytes = new byte[ dataBuffer.readableByteCount() ];
+                    dataBuffer.read(bytes);
+                    DataBufferUtils.release( dataBuffer );
+                    return new String( bytes, StandardCharsets.UTF_8 );
+                } ).reduce( (content1, content2) -> content1 + content2 );
     }
 }
 

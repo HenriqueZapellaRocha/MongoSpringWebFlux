@@ -27,11 +27,17 @@ public class CheckoutFacade {
                         checkoutTopicProducers.invalidCheckout( checkoutMessage, "product not found" )
                         .then( Mono.error( new Exception( "Product not found" ) ))))
 
-                .filter( productEntity -> checkoutMessage.getQuantity() < productEntity.getQuantity() )
-
+                .filter( productEntity -> checkoutMessage.getQuantity() >= 0 )
                 .switchIfEmpty(Mono.defer(() ->
+                        checkoutTopicProducers.invalidCheckout( checkoutMessage, "Negative quantity" )
+                                .then( Mono.error( new Exception( "Negative quantity" ) ))))
+
+                .filter( productEntity -> checkoutMessage.getQuantity() <= productEntity.getQuantity() )
+
+                .switchIfEmpty( Mono.defer(() ->
                         checkoutTopicProducers.invalidCheckout( checkoutMessage, "Quantity bigger then exist" )
-                        .then( Mono.error( new Exception( "Quantity bigger then exist" ) ))))
+                        .then( Mono.error( new Exception( "Quantity bigger then exist" ) )))
+                )
 
                 .flatMap( productEntity ->
                                 Mono.when( checkoutService.checkout( productEntity, checkoutMessage.getQuantity() ),

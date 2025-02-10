@@ -66,7 +66,7 @@ public class MinioAdapter {
                             .build()
             );
             return Mono.empty();
-                })
+        })
                 .subscribeOn( Schedulers.boundedElastic() )
                 .onErrorMap(e -> new GlobalException( "error deleting image" ))
                 .then();

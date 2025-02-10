@@ -11,7 +11,7 @@ build/
 .factorypath
 .project
 .settings
-.springBeans
+.springBean
 .sts4-cache
 bin/
 !**/src/main/**/bin/
@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+checkoutService/src/main/resources/application.properties
+
