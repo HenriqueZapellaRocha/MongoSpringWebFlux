@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.v1.controller.DTOS.requests;
+package com.example.mongospringwebflux.v1.controller.DTOS.requests.productsRequestDTOS;
 
 
 import com.example.mongospringwebflux.repository.entity.ProductEntity;

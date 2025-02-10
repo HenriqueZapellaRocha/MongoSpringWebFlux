@@ -2,7 +2,7 @@ package com.example.mongospringwebflux.v1.controller;
 
 
 import com.example.mongospringwebflux.service.services.AdminService;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.productsRequestDTOS.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
 import jakarta.validation.Valid;

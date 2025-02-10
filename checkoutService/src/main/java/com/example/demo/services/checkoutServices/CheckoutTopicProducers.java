@@ -23,7 +23,8 @@ public class CheckoutTopicProducers {
                                 .setProductId( checkoutMessage.getProductId() )
                                 .setUserEmail(checkoutMessage.getUserEmail())
                                 .setQuantity( checkoutMessage.getQuantity() )
-                                .setUserId(checkoutMessage.getUserId() )
+                                .setUserId( checkoutMessage.getUserId() )
+                                .setCurrency( checkoutMessage.getCurrency() )
                         .build()
         ).then();
     }

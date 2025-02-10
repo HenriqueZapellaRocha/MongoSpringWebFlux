@@ -3,6 +3,7 @@ package com.example.mongospringwebflux.v1.controller;
 
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.facades.CheckoutFacade;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.checkoutDTOS.CheckoutRequestDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,12 +18,12 @@ public class CheckoutController {
 
     private final CheckoutFacade checkoutFacade;
 
-    @GetMapping("/{productId}/{quantity}")
-    public Mono<Void> checkout( @PathVariable String productId,
-                                @PathVariable Integer quantity,
+    @PostMapping
+    public Mono<Void> checkout( @RequestBody CheckoutRequestDTO checkoutRequestDTO,
+                                @RequestParam( name = "currency" ) String currency,
                                 @AuthenticationPrincipal UserEntity currentUser ) {
 
-        return checkoutFacade.checkout( currentUser, productId, quantity );
+        return checkoutFacade.checkout( currentUser, checkoutRequestDTO, currency );
     }
 
 }

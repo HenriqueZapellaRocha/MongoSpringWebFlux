@@ -8,6 +8,7 @@
     { "name": "role", "type": "string" },
     { "name": "userEmail", "type": "string" },
     { "name":  "productId", "type": "string"},
-    { "name":  "quantity", "type": "int"}
-    ]
-    }
+    { "name":  "quantity", "type": "int"},
+    { "name": "currency", "type": "string" }
+  ]
+}

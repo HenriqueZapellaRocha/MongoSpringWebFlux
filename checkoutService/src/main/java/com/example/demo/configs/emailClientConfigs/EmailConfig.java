@@ -13,19 +13,19 @@ import org.springframework.context.annotation.Configuration;
 public class EmailConfig {
 
 
-    @Value("${vertx.mail.host}")
+    @Value("${mail.host}")
     private String hostname;
 
-    @Value("${vertx.mail.port}")
+    @Value("${mail.port}")
     private int port;
 
-    @Value("${vertx.mail.username}")
+    @Value("${mail.username}")
     private String username;
 
-    @Value("${vertx.mail.password}")
+    @Value("${mail.password}")
     private String password;
 
-    @Value("${vertx.mail.ssl}")
+    @Value("${mail.ssl}")
     private boolean starttls;
 
     @Bean

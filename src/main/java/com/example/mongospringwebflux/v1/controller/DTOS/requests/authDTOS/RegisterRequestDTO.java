@@ -1,4 +1,4 @@
-package com.example.mongospringwebflux.v1.controller.DTOS.requests;
+package com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS;
 
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
 import jakarta.validation.Valid;

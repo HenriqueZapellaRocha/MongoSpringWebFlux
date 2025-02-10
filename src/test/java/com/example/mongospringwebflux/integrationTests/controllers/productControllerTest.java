@@ -5,7 +5,7 @@ import com.example.mongospringwebflux.dtos.NotFoundExceptionDTO;
 import com.example.mongospringwebflux.exception.NotFoundException;
 import com.example.mongospringwebflux.integrationTests.controllers.basicModels.AbstractBaseIntegrationTest;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.productsRequestDTOS.ProductRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;

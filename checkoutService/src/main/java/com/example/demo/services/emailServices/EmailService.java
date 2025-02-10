@@ -27,13 +27,14 @@ public class EmailService {
 
         return templateLoader().map( template -> {
 
-            BigDecimal value = product.getPrice().multiply(new BigDecimal(checkoutMessage.getQuantity()))
+            BigDecimal value = product.getPrice().multiply( new BigDecimal( checkoutMessage.getQuantity()) )
                     .setScale( 2, RoundingMode.HALF_UP );
 
                 template = template.replace( "#{clientName}", checkoutMessage.getLogin() );
-                template = template.replace( "#{productName}", product.getName() );
+                template = template.replace( "#{productName}", product.getName() ) ;
                 template = template.replace( "#{checkoutId}", checkoutId );
                 template = template.replace( "#{value}", value.toString() );
+                template = template.replace( "#{currency}", checkoutMessage.getCurrency() );
 
                 return template;
 

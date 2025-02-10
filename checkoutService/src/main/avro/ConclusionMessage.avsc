@@ -7,6 +7,7 @@
     { "name": "userId", "type": "string" },
     { "name": "userEmail", "type": "string" },
     { "name":  "productId", "type": "string"},
+    { "name": "currency", "type": "string" },
     { "name":  "quantity", "type": "int"}
   ]
 }

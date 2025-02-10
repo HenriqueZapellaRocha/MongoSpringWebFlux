@@ -3,7 +3,7 @@ package com.example.mongospringwebflux.service.facades;
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
 import com.example.mongospringwebflux.service.services.StoreService;
 import com.example.mongospringwebflux.service.services.securityServices.UserService;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.RegisterRequestDTO;
+import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.RegisterRequestDTO;
 import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
