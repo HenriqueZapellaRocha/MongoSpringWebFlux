@@ -13,25 +13,23 @@ import org.springframework.context.annotation.Configuration;
 public class EmailConfig {
 
 
-    @Value("${mail.host}")
+    @Value( "${mail.host}" )
     private String hostname;
-    @Value("${mail.port}")
+    @Value( "${mail.port}" )
     private int port;
-    @Value("${mail.username}")
+    @Value( "${mail.username}" )
     private String username;
-    @Value("${mail.password}")
+    @Value( "${mail.password}" )
     private String password;
-    @Value("${mail.ssl}")
-    private boolean starttls;
 
     @Bean
     public MailClient mailClient() {
         MailConfig config = new MailConfig()
-                .setHostname(hostname)
-                .setPort(port)
-                .setUsername(username)
-                .setPassword(password)
-                .setStarttls(StartTLSOptions.REQUIRED);
-        return MailClient.createShared(Vertx.vertx(), config);
+                .setHostname( hostname )
+                .setPort( port )
+                .setUsername( username )
+                .setPassword( password )
+                .setStarttls( StartTLSOptions.REQUIRED );
+        return MailClient.createShared( Vertx.vertx(), config );
     }
 }

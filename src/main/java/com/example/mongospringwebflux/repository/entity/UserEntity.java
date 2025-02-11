@@ -1,7 +1,7 @@
 package com.example.mongospringwebflux.repository.entity;
 
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.userDTOS.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

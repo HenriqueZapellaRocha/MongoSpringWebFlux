@@ -2,10 +2,10 @@ package com.example.mongospringwebflux.service.services.securityServices;
 
 import com.example.mongospringwebflux.repository.UserRepository;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.RegisterRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.loginRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.authDTOS.AuthResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.authDTOS.RegisterRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.authDTOS.RegisterResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.authDTOS.loginRequestDTO;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;

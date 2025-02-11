@@ -1,13 +1,13 @@
 package com.example.mongospringwebflux.integrationTests.controllers;
 
-import com.example.mongospringwebflux.dtos.GlobalExceptionDTO;
+import com.example.mongospringwebflux.exceptions.dtos.GlobalExceptionDTO;
 import com.example.mongospringwebflux.integrationTests.controllers.basicModels.AbstractBaseIntegrationTest;
 import com.example.mongospringwebflux.repository.entity.enums.UserRoles;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.RegisterRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.StoreCreationRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.authDTOS.loginRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.AuthResponseDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.RegisterResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.authDTOS.RegisterRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.authDTOS.StoreCreationRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.authDTOS.loginRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.authDTOS.AuthResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.authDTOS.RegisterResponseDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;

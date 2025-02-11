@@ -2,7 +2,7 @@ package com.example.mongospringwebflux.integrationTests.controllers;
 
 import com.example.mongospringwebflux.integrationTests.controllers.basicModels.AbstractBaseIntegrationTest;
 import com.example.mongospringwebflux.repository.entity.StoreEntity;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.StoreResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.storeDTOS.StoreResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

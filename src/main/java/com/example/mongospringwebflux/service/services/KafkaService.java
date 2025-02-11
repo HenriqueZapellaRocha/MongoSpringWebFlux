@@ -2,9 +2,8 @@ package com.example.mongospringwebflux.service.services;
 
 import com.example.avro.CheckoutMessage;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.checkoutDTOS.CheckoutRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.checkoutDTOS.CheckoutRequestDTO;
 import lombok.Data;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

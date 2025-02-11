@@ -1,8 +1,8 @@
 package com.example.mongospringwebflux.service.services;
 
 
-import com.example.mongospringwebflux.exception.GlobalException;
-import com.example.mongospringwebflux.exception.NotFoundException;
+import com.example.mongospringwebflux.exceptions.exception.GlobalException;
+import com.example.mongospringwebflux.exceptions.exception.NotFoundException;
 import com.example.mongospringwebflux.integration.exchange.ExchangeIntegration;
 import com.example.mongospringwebflux.repository.ProductRepository;
 import com.example.mongospringwebflux.repository.StoreRepository;
@@ -10,9 +10,9 @@ import com.example.mongospringwebflux.repository.UserRepository;
 import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import com.example.mongospringwebflux.service.facades.ImageLogicFacade;
-import com.example.mongospringwebflux.v1.controller.DTOS.requests.productsRequestDTOS.ProductRequestDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.ProductResponseDTO;
-import com.example.mongospringwebflux.v1.controller.DTOS.responses.UserResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.requests.productsRequestDTOS.ProductRequestDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.productDTOS.ProductResponseDTO;
+import com.example.mongospringwebflux.v1.DTOS.responses.userDTOS.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
