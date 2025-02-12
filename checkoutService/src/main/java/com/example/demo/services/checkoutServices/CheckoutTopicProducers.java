@@ -19,7 +19,7 @@ public class CheckoutTopicProducers {
         return producerTemplate.send(
 
                 "checkout-completed", UUID.randomUUID().toString(), ConclusionMessage.newBuilder()
-                                .setError(null)
+                                .setError( null )
                                 .setProductId( checkoutMessage.getProductId() )
                                 .setUserEmail(checkoutMessage.getUserEmail())
                                 .setQuantity( checkoutMessage.getQuantity() )

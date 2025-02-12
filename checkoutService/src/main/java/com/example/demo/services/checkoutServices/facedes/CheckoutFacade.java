@@ -28,7 +28,7 @@ public class CheckoutFacade {
                         .then( Mono.error( new Exception( "Product not found" ) ))))
 
                 .filter( productEntity -> checkoutMessage.getQuantity() >= 0 )
-                .switchIfEmpty(Mono.defer(() ->
+                .switchIfEmpty( Mono.defer(() ->
                         checkoutTopicProducers.invalidCheckout( checkoutMessage, "Negative quantity" )
                                 .then( Mono.error( new Exception( "Negative quantity" ) ))))
 

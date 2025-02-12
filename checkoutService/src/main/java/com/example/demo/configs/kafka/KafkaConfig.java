@@ -11,6 +11,9 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import reactor.kafka.receiver.ReceiverOptions;
@@ -29,7 +32,7 @@ public class KafkaConfig {
 
         Map<String, Object> props = new HashMap<>();
         props.put( ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094" );
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "meu-grupo-consumidor");
+        props.put( ConsumerConfig.GROUP_ID_CONFIG, "meu-grupo-consumidor");
         props.put( ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class );
         props.put( ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class );
         props.put( "schema.registry.url", "http://localhost:8081" );
@@ -56,6 +59,29 @@ public class KafkaConfig {
         SenderOptions<String, ConclusionMessage> senderOptions = SenderOptions.create(props);
 
         return new ReactiveKafkaProducerTemplate<>(senderOptions);
+    }
+
+    @Bean
+    public ConsumerFactory<String, CheckoutMessage> consumerFactoryy() {
+        Map<String, Object> props = new HashMap<>();
+        props.put( ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094" );
+        props.put( ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class );
+        props.put( ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class );
+        props.put( "schema.registry.url", "http://localhost:8081" );
+        props.put( "specific.avro.reader", "true" );
+
+        return new DefaultKafkaConsumerFactory<>( props );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, CheckoutMessage> kafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, CheckoutMessage>
+                factory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        factory.setConsumerFactory( consumerFactoryy() );
+
+        return factory;
     }
     
 }

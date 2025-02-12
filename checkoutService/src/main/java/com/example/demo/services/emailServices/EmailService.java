@@ -42,9 +42,9 @@ public class EmailService {
                 .flatMap(emailTemplate -> {
                     MailMessage mailMessage = new MailMessage();
                     mailMessage.setFrom("noreply@mail.com");
-                    mailMessage.setTo(checkoutMessage.getUserEmail());
+                    mailMessage.setTo( checkoutMessage.getUserEmail() );
                     mailMessage.setSubject("Checkout Confirmation");
-                    mailMessage.setHtml(emailTemplate);
+                    mailMessage.setHtml( emailTemplate );
 
                     return Mono.just( mailClient.sendMail(mailMessage) );
                 })

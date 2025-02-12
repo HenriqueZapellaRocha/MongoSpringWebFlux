@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate;
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import reactor.kafka.sender.SenderOptions;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-//@EnableKafkaStreams
 public class KafkaConfig {
 
     @Bean
@@ -29,14 +27,14 @@ public class KafkaConfig {
 
         Map<String, Object> props = new HashMap<>();
 
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        props.put("schema.registry.url", "http://localhost:8081");
+        props.put( ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094" );
+        props.put( ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class );
+        props.put( ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class );
+        props.put( "schema.registry.url", "http://localhost:8081" );
 
-        SenderOptions<String, CheckoutMessage> senderOptions = SenderOptions.create(props);
+        SenderOptions<String, CheckoutMessage> senderOptions = SenderOptions.create( props );
 
-        return new ReactiveKafkaProducerTemplate<>(senderOptions);
+        return new ReactiveKafkaProducerTemplate<>( senderOptions );
     }
 
     @Bean
@@ -65,18 +63,4 @@ public class KafkaConfig {
         return factory;
     }
 
-//    @Bean( name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME )
-//    public KafkaStreamsConfiguration kStreamsConfig() {
-//
-//        Map<String, Object> props = new HashMap<>();
-//        props.put( APPLICATION_ID_CONFIG, "servicess" );
-//        props.put( BOOTSTRAP_SERVERS_CONFIG, "localhost:9094" );
-//        props.put( "schema.registry.url", "http://localhost:8081" );
-//        props.put( DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass() ) ;
-//        props.put( DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class );
-//
-//        props.put( "specific.avro.reader", "true" );
-//
-//        return new KafkaStreamsConfiguration( props );
-//    }
 }

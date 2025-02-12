@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class openDocCongif {
+public class openDocConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {

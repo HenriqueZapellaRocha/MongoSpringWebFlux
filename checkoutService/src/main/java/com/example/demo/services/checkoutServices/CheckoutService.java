@@ -16,7 +16,9 @@ public class CheckoutService {
 
         productEntity.setQuantity( productEntity.getQuantity() - quantity );
 
-        return productRepository.save( productEntity )
-                .then();
+        if( productEntity.getQuantity() > 0 )
+            return productRepository.save( productEntity ).then();
+        else
+            return productRepository.delete( productEntity ).then();
     }
 }

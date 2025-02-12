@@ -8,7 +8,7 @@ import com.example.mongospringwebflux.repository.entity.ProductEntity;
 import com.example.mongospringwebflux.repository.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class ImageLogicFacade {
 
     public Mono<String> validateAndPersistsImage( FilePart image, String productId, UserEntity currentUser ) {
 
-        String newFileName = productId + '.' + FileNameUtils.getExtension( image.filename() );
+        String newFileName = productId + '.' + FilenameUtils.getExtension( image.filename() );
 
         return productRepository.getByStoreId( currentUser.getStoreId() )
                 .filter( product -> product.getProductID().equals( productId ) )
